@@ -1,0 +1,47 @@
+# This file configures the analyzer to use the lint rule set from `package:lint`
+
+include: package:lint/analysis_options_package.yaml
+
+# Adjusted linting rules
+linter:
+  rules:
+    always_use_package_imports: false
+    prefer_relative_imports: true
+    prefer_double_quotes: true
+    sort_constructors_first: true
+    unawaited_futures: true
+    # public_member_api_docs: true
+    comment_references: true
+    unnecessary_lambdas: true
+    lines_longer_than_80_chars: true
+    avoid_catches_without_on_clauses: true
+    use_to_and_as_if_applicable: true
+    avoid_returning_this: true
+    avoid_types_on_closure_parameters: true
+    avoid_slow_async_io: true
+    close_sinks: true
+    cascade_invocations: true
+    only_throw_errors: true
+
+dart_code_metrics:
+  anti-patterns:
+    - long-method
+    - long-parameter-list
+  metrics:
+    cyclomatic-complexity: 20
+    maximum-nesting-level: 5
+    number-of-parameters: 4
+    source-lines-of-code: 50
+  metrics-exclude:
+    - test/**
+  rules:
+    - avoid-nested-conditional-expressions:
+        - acceptable-level: 2
+    - avoid-throw-in-catch-block # throwWithStackTrace should be used instead
+    - avoid-unnecessary-type-casts
+    - no-boolean-literal-compare
+    - no-empty-block
+    - no-equal-then-else
+    - no-magic-number:
+        - allowed: [3.14, -1, 0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 100]
+    - prefer-correct-type-name

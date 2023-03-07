@@ -1,0 +1,20 @@
+name: dart_ndn
+description: Package for Named Data Networking (NDN) in Dart and Flutter.
+version: 0.1.0
+repository: https://github.com/hsel-netsys/dart_ndn
+
+environment:
+  sdk: '>=3.3.0 < 4.0.0'
+
+dev_dependencies:
+  lint: ^2.0.2
+  lints: ^2.0.2
+  test: ^1.21.0
+dependencies:
+  collection: ^1.18.0
+  convert: ^3.1.1
+  crypto: ^3.0.2
+  ecdsa: ^0.1.0
+  elliptic: ^0.3.10
+  meta: ^1.12.0
+  ninja_asn1: ^2.0.0
