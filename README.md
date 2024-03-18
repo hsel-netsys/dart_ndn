@@ -1,3 +1,8 @@
+[![pub package](https://img.shields.io/pub/v/dart_ndn.svg)](https://pub.dev/packages/dart_ndn)
+[![Build](https://github.com/hsel-netsys/dart_ndn/actions/workflows/ci.yml/badge.svg)](https://github.com/hsel-netsys/dart_ndn/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/hsel-netsys/dart_ndn/branch/main/graph/badge.svg?token=76OBNOVL60)](https://codecov.io/gh/hsel-netsys/dart_ndn)
+[![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint)
+
 # Named Data Networking (NDN) in Dart
 
 `dart_ndn` is a basic Named Data Networking (NDN) implementation that can be
