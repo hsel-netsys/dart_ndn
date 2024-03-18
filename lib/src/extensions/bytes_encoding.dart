@@ -218,19 +218,4 @@ extension BytesDecoder on List<int> {
   /// Obtains the length of the type and the length bytes before the actual
   /// value.
   int? get preValueLength => 0;
-
-  int parseNonNegativeInteger() {
-    switch (length) {
-      case 1:
-        return first;
-      case 2:
-        return Uint8List.fromList(this).buffer.asByteData().getUint16(0);
-      case 4:
-        return Uint8List.fromList(this).buffer.asByteData().getUint32(0);
-      case 8:
-        return Uint8List.fromList(this).buffer.asByteData().getUint64(0);
-    }
-
-    throw const FormatException("TODO");
-  }
 }

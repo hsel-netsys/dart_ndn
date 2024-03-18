@@ -6,7 +6,7 @@
 
 import "dart:math";
 
-import "../extensions/int_encoding.dart";
+import "../extensions/non_negative_integer.dart";
 import "../extensions/tlv_element_encoding.dart";
 import "name/name.dart";
 import "tlv_element.dart";
@@ -71,7 +71,7 @@ class InterestLifetime extends KnownTlvElement {
   final Duration duration;
 
   @override
-  List<int> get value => duration.inMilliseconds.encodeAsNonNegativeInteger();
+  List<int> get value => NonNegativeInteger(duration.inMilliseconds).encode();
 }
 
 class HopLimit extends KnownTlvElement {
