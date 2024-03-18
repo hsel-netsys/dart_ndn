@@ -10,6 +10,7 @@ import "package:elliptic/elliptic.dart";
 import "package:meta/meta.dart";
 
 import "../../../extensions/int_encoding.dart";
+import "../../../extensions/non_negative_integer.dart";
 import "../../tlv_element.dart";
 import "../../tlv_type.dart";
 
@@ -22,15 +23,17 @@ enum SignatureType {
   signatureEd25519(5),
   ;
 
-  const SignatureType(this.numericValue);
+  const SignatureType(this._numericValue);
 
-  final int numericValue;
+  final int _numericValue;
+
+  NonNegativeInteger get numericValue => NonNegativeInteger(_numericValue);
 
   int get type => tlvType.number;
 
   TlvType get tlvType => TlvType.signatureType;
 
-  List<int> get value => numericValue.encodeAsNonNegativeInteger();
+  List<int> get value => numericValue.encode();
 
   int get length => value.length;
 

@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "../../extensions/bytes_encoding.dart";
-import "../../extensions/int_encoding.dart";
+import "../../extensions/non_negative_integer.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "lp_packet.dart";
@@ -43,9 +43,11 @@ enum NackReasonValue {
   noRoute(150),
   ;
 
-  const NackReasonValue(this.code);
+  const NackReasonValue(this._code);
 
-  final int code;
+  final int _code;
+
+  NonNegativeInteger get code => NonNegativeInteger(_code);
 
   static final Map<int, NackReasonValue> _registry =
       Map.fromEntries(values.map((e) => MapEntry(e.code, e)));
@@ -57,7 +59,7 @@ final class NackReason extends KnownTlvElement {
   const NackReason([this._nackReasonValue]);
 
   factory NackReason.fromValue(List<int> value) {
-    final nonNegativeInteger = value.parseNonNegativeInteger();
+    final nonNegativeInteger = NonNegativeInteger.fromValue(value);
 
     final nackReasonValue = NackReasonValue.tryParse(nonNegativeInteger);
 
@@ -73,5 +75,5 @@ final class NackReason extends KnownTlvElement {
   TlvType get tlvType => TlvType.nackReason;
 
   @override
-  List<int> get value => nackReasonValue.code.encodeAsNonNegativeInteger();
+  List<int> get value => nackReasonValue.code.encode();
 }

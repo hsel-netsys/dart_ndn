@@ -6,8 +6,7 @@
 
 import "dart:convert";
 
-import "../../extensions/bytes_encoding.dart";
-import "../../extensions/int_encoding.dart";
+import "../../extensions/non_negative_integer.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 
@@ -15,18 +14,18 @@ class StatusCode extends KnownTlvElement {
   const StatusCode(this.code);
 
   factory StatusCode.fromValue(List<int> value) {
-    final intValue = value.parseNonNegativeInteger();
+    final intValue = NonNegativeInteger.fromValue(value);
 
     return StatusCode(intValue);
   }
 
-  final int code;
+  final NonNegativeInteger code;
 
   @override
   TlvType get tlvType => TlvType.statusCode;
 
   @override
-  List<int> get value => code.encodeAsNonNegativeInteger();
+  List<int> get value => code.encode();
 
   @override
   String toString() => "StatusCode (type: $type): $code";

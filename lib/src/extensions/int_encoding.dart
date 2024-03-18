@@ -39,33 +39,4 @@ extension EncodeOctects on int {
     final bytes = Uint8List(8)..buffer.asByteData().setUint64(0, this);
     return [255, ...bytes];
   }
-
-  /// Encodes this integer using the [Non-Negative Integer Encoding] defined
-  /// in the NDN Packet Format Specification.
-  ///
-  /// Throws a [FormatException] if this integer is in fact negative.
-  ///
-  /// [Non-Negative Integer Encoding]: See https://docs.named-data.net/NDN-packet-spec/current/tlv.html#non-negative-integer-encoding
-  List<int> encodeAsNonNegativeInteger() {
-    if (this < 0) {
-      throw FormatException("Expected a non-negative integer, found $this.");
-    }
-
-    if (this <= 252) {
-      return [this];
-    }
-
-    if (this <= 65535) {
-      // Encode as 2 bytes
-      return Uint8List(2)..buffer.asByteData().setUint16(0, this);
-    }
-
-    if (this <= 4294967295) {
-      // Encode as 4 bytes
-      return Uint8List(4)..buffer.asByteData().setUint32(0, this);
-    }
-
-    // Encode as 8 bytes
-    return Uint8List(8)..buffer.asByteData().setUint64(0, this);
-  }
 }
