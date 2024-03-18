@@ -87,28 +87,3 @@ class Face extends Stream<NdnPacket> {
             cancelOnError: cancelOnError,
           );
 }
-
-enum Scope {
-  local,
-  nonLocal,
-}
-
-enum LinkType {
-  pointToPoint,
-  multiAccess,
-  adHoc,
-}
-
-enum Persistency {
-  onDemand,
-  persistent,
-  permanent,
-}
-
-enum FaceState {
-  up,
-  down,
-  closing,
-  failing,
-  closed,
-}
