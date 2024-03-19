@@ -7,12 +7,9 @@
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 
-final class InterestSignatureValue extends KnownTlvElement {
-  const InterestSignatureValue(this.value);
+final class InterestSignatureValue extends OctetTlvElement {
+  const InterestSignatureValue(super.value);
 
   @override
   TlvType get tlvType => TlvType.interestSignatureValue;
-
-  @override
-  final List<int> value;
 }

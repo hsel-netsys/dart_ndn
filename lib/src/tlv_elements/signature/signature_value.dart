@@ -13,8 +13,8 @@ import "../tlv_type.dart";
 import "signature_type.dart";
 
 // TODO: This only implements DigestSha256 for now
-final class SignatureValue extends KnownTlvElement {
-  const SignatureValue(this.value);
+final class SignatureValue extends OctetTlvElement {
+  const SignatureValue(super.value);
 
   factory SignatureValue.sign(
     List<int> content,
@@ -60,7 +60,4 @@ final class SignatureValue extends KnownTlvElement {
 
   @override
   TlvType get tlvType => TlvType.signatureValue;
-
-  @override
-  final List<int> value;
 }

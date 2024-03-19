@@ -4,18 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../../extensions/non_negative_integer.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 
-final class SignatureSeqNum extends KnownTlvElement {
-  const SignatureSeqNum(this.sequenceNumber);
-
-  final NonNegativeInteger sequenceNumber;
+final class SignatureSeqNum extends NonNegativeIntegerTlvElement {
+  const SignatureSeqNum(super.sequenceNumber);
 
   @override
   TlvType get tlvType => TlvType.signatureSeqNum;
-
-  @override
-  List<int> get value => sequenceNumber.encode();
 }

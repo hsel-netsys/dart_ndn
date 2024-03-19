@@ -7,12 +7,9 @@
 import "../../tlv_element.dart";
 import "../../tlv_type.dart";
 
-final class Content extends KnownTlvElement {
-  const Content(this.value);
+final class Content extends OctetTlvElement {
+  const Content(super.value);
 
   @override
   TlvType get tlvType => TlvType.content;
-
-  @override
-  final List<int> value;
 }

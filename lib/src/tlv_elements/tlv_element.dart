@@ -7,6 +7,7 @@
 import "package:meta/meta.dart";
 
 import "../extensions/int_encoding.dart";
+import "../extensions/non_negative_integer.dart";
 import "name/name.dart";
 import "name/name_component.dart";
 import "nfd_management/control_parameters.dart";
@@ -212,6 +213,22 @@ abstract base class KnownTlvElement extends TlvElement {
 
   @override
   int get type => tlvType.number;
+}
+
+abstract base class NonNegativeIntegerTlvElement extends KnownTlvElement {
+  const NonNegativeIntegerTlvElement(this.nonNegativeInteger);
+
+  final NonNegativeInteger nonNegativeInteger;
+
+  @override
+  List<int> get value => nonNegativeInteger.encode();
+}
+
+abstract base class OctetTlvElement extends KnownTlvElement {
+  const OctetTlvElement(this.value);
+
+  @override
+  final List<int> value;
 }
 
 final class UnknownTlvElement extends TlvElement {
