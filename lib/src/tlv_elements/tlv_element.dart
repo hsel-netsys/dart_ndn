@@ -29,18 +29,18 @@ abstract base class TlvElement {
 
   int get type;
 
-  int get length => value.length;
+  int get length => encodedValue.length;
 
-  List<int> get value;
+  List<int> get encodedValue;
 
   Iterable<int> encode() sync* {
     yield* type.encodeAsNdnTlv();
     yield* length.encodeAsNdnTlv();
-    yield* value;
+    yield* encodedValue;
   }
 
   @override
-  int get hashCode => Object.hashAll([type, value]);
+  int get hashCode => Object.hashAll([type, encodedValue]);
 
   @override
   bool operator ==(Object other) {
@@ -48,9 +48,9 @@ abstract base class TlvElement {
       return false;
     }
 
-    final otherIterator = other.value.iterator;
+    final otherIterator = other.encodedValue.iterator;
 
-    for (final byte in value) {
+    for (final byte in encodedValue) {
       if (!otherIterator.moveNext()) {
         return false;
       }
@@ -221,22 +221,22 @@ abstract base class NonNegativeIntegerTlvElement extends KnownTlvElement {
   final NonNegativeInteger nonNegativeInteger;
 
   @override
-  List<int> get value => nonNegativeInteger.encode();
+  List<int> get encodedValue => nonNegativeInteger.encode();
 }
 
 abstract base class OctetTlvElement extends KnownTlvElement {
-  const OctetTlvElement(this.value);
+  const OctetTlvElement(this.encodedValue);
 
   @override
-  final List<int> value;
+  final List<int> encodedValue;
 }
 
 final class UnknownTlvElement extends TlvElement {
-  const UnknownTlvElement(this.type, this.value);
+  const UnknownTlvElement(this.type, this.encodedValue);
 
   @override
   final int type;
 
   @override
-  final List<int> value;
+  final List<int> encodedValue;
 }

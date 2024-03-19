@@ -40,11 +40,14 @@ final class NameKeyLocator extends KeyLocator {
   List<int> get encodedValue => name.encode().toList();
 }
 
-final class KeyDigest extends OctetTlvElement {
-  const KeyDigest(super.value);
+final class KeyDigest extends KnownTlvElement {
+  const KeyDigest(this.encodedValue);
 
   @override
   TlvType get tlvType => TlvType.keyDigest;
+
+  @override
+  final List<int> encodedValue;
 }
 
 final class KeyDigestKeyLocator extends KeyLocator {

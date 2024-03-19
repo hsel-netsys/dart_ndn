@@ -46,7 +46,7 @@ final class InterestPacket extends NdnPacket {
       switch (tlvElement.type) {
         case 8:
           nameComponents
-              .add(GenericNameComponent(utf8.decode(tlvElement.value)));
+              .add(GenericNameComponent(utf8.decode(tlvElement.encodedValue)));
       }
     }
 
@@ -86,10 +86,10 @@ final class InterestPacket extends NdnPacket {
 
   @override
   // TODO: Check if this can be made more efficient
-  int get length => value.length;
+  int get length => encodedValue.length;
 
   @override
-  List<int> get value {
+  List<int> get encodedValue {
     final encodedValues = name.encode().toList();
 
     if (canBePrefix) {

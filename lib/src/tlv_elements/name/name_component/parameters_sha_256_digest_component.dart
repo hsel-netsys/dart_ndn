@@ -19,13 +19,13 @@ part of "../name_component.dart";
 ///
 /// [NDN Packet Specification]: https://docs.named-data.net/NDN-packet-spec/current/name.html#parameters-digest-component
 final class ParametersSha256DigestComponent extends NameComponent {
-  const ParametersSha256DigestComponent(this.value);
+  const ParametersSha256DigestComponent(this.encodedValue);
 
   @override
   TlvType get tlvType => TlvType.implicitSha256DigestComponent;
 
   @override
-  final List<int> value;
+  final List<int> encodedValue;
 
   /// Indicates whether the SHA-256 value has a [length] of 32 bytes.
   bool get isValid => length == 32;

@@ -13,5 +13,5 @@ final class Certificate extends KnownTlvElement {
 
   @override
   // TODO: implement value
-  List<int> get value => throw UnimplementedError();
+  List<int> get encodedValue => throw UnimplementedError();
 }

@@ -30,7 +30,7 @@ final class SignatureType extends KnownTlvElement {
   TlvType get tlvType => TlvType.signatureValue;
 
   @override
-  List<int> get value => signaturTypeValue.encode();
+  List<int> get encodedValue => signaturTypeValue.encode();
 }
 
 // TODO: https://docs.named-data.net/NDN-packet-spec/current/signature.html#signature-elements

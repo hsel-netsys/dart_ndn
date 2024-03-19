@@ -21,7 +21,7 @@ class DataSignature {
   ) {
     final signatureInfo = SignatureInfo(signatureType);
 
-    final valueToSign = [...value, ...signatureInfo.value];
+    final valueToSign = [...value, ...signatureInfo.encodedValue];
 
     final signatureValue = SignatureValue.sign(
       valueToSign,

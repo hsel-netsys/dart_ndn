@@ -39,5 +39,5 @@ base class LpPacket extends NdnPacket {
 
   @override
   // TODO: implement value
-  List<int> get value => [];
+  List<int> get encodedValue => [];
 }

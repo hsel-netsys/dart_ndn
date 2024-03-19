@@ -54,7 +54,7 @@ sealed class NameComponent extends KnownTlvElement
       return type - otherLength;
     }
 
-    for (final pair in IterableZip([value, other.value])) {
+    for (final pair in IterableZip([encodedValue, other.encodedValue])) {
       final difference = pair.first - pair[1];
       if (difference != 0) {
         return difference;

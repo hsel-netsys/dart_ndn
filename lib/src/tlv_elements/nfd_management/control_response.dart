@@ -49,7 +49,7 @@ final class ControlResponse extends KnownTlvElement {
   TlvType get tlvType => TlvType.controlResponse;
 
   @override
-  List<int> get value => [
+  List<int> get encodedValue => [
         ...statusCode.encode(),
         ...statusText.encode(),
         ...body.encode(),

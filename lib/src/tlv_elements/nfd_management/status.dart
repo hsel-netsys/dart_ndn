@@ -41,7 +41,7 @@ final class StatusText extends KnownTlvElement {
   TlvType get tlvType => TlvType.statusText;
 
   @override
-  List<int> get value => utf8.encode(text);
+  List<int> get encodedValue => utf8.encode(text);
 
   @override
   String toString() => "StatusText (type: $type): $text";

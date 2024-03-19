@@ -26,7 +26,7 @@ final class ControlParameters extends KnownTlvElement {
   TlvType get tlvType => TlvType.controlParameters;
 
   @override
-  List<int> get value {
+  List<int> get encodedValue {
     final encodedValue = <int>[];
 
     final name = this.name;

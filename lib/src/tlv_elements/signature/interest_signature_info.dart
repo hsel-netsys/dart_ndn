@@ -35,7 +35,7 @@ final class InterestSignatureInfo extends KnownTlvElement {
   TlvType get tlvType => TlvType.interestSignatureInfo;
 
   @override
-  List<int> get value {
+  List<int> get encodedValue {
     final result = signatureType.encode().toList();
 
     final tlvElements = [

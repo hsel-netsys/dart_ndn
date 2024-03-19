@@ -25,6 +25,6 @@ final class SignatureTime extends KnownTlvElement {
   TlvType get tlvType => TlvType.signatureTime;
 
   @override
-  List<int> get value =>
+  List<int> get encodedValue =>
       NonNegativeInteger(signatureTime.millisecondsSinceEpoch).encode();
 }

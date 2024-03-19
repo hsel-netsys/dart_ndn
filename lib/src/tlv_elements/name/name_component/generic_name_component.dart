@@ -21,7 +21,7 @@ final class GenericNameComponent extends NameComponent {
   TlvType get tlvType => TlvType.genericNameComponent;
 
   @override
-  List<int> get value => utf8.encode(content);
+  List<int> get encodedValue => utf8.encode(content);
 
   @override
   TlvValueFormat get tlvValueFormat => TlvValueFormat.octetStar;
@@ -37,7 +37,7 @@ final class ControlParametersNameComponent extends NameComponent {
   TlvType get tlvType => TlvType.genericNameComponent;
 
   @override
-  List<int> get value => controlParameters.encode().toList();
+  List<int> get encodedValue => controlParameters.encode().toList();
 
   @override
   TlvValueFormat get tlvValueFormat => TlvValueFormat.octetStar;

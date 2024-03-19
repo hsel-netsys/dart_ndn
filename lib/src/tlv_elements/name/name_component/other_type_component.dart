@@ -14,17 +14,17 @@ part of "../name_component.dart";
 ///
 /// [Name Component Assignment policy]: https://redmine.named-data.net/projects/ndn-tlv/wiki/NameComponentType
 sealed class OtherTypeComponent extends NameComponent {
-  const OtherTypeComponent(this.value);
+  const OtherTypeComponent(this.encodedValue);
 
   @override
-  final List<int> value;
+  final List<int> encodedValue;
 
   @override
   TlvValueFormat get tlvValueFormat => TlvValueFormat.nonNegativeInteger;
 }
 
 final class KeywordNameComponent extends OtherTypeComponent {
-  const KeywordNameComponent(super.value);
+  const KeywordNameComponent(super.encodedValue);
 
   @override
   TlvType get tlvType => TlvType.keywordNameComponent;
@@ -34,35 +34,35 @@ final class KeywordNameComponent extends OtherTypeComponent {
 }
 
 final class SegmentNameComponent extends OtherTypeComponent {
-  const SegmentNameComponent(super.value);
+  const SegmentNameComponent(super.encodedValue);
 
   @override
   TlvType get tlvType => TlvType.segmentNameComponent;
 }
 
 final class ByteOffsetNameComponent extends OtherTypeComponent {
-  const ByteOffsetNameComponent(super.value);
+  const ByteOffsetNameComponent(super.encodedValue);
 
   @override
   TlvType get tlvType => TlvType.byteOffsetNameComponent;
 }
 
 final class VersionNameComponent extends OtherTypeComponent {
-  const VersionNameComponent(super.value);
+  const VersionNameComponent(super.encodedValue);
 
   @override
   TlvType get tlvType => TlvType.versionNameComponent;
 }
 
 final class TimestampNameComponent extends OtherTypeComponent {
-  const TimestampNameComponent(super.value);
+  const TimestampNameComponent(super.encodedValue);
 
   @override
   TlvType get tlvType => TlvType.timestampNameComponent;
 }
 
 final class SequenceNumNameComponent extends OtherTypeComponent {
-  const SequenceNumNameComponent(super.value);
+  const SequenceNumNameComponent(super.encodedValue);
 
   @override
   TlvType get tlvType => TlvType.sequenceNumNameComponent;

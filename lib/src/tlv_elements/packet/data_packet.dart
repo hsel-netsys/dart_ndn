@@ -45,7 +45,7 @@ final class DataPacket extends NdnPacket {
     final content = tlvIterator.current;
 
     if (content is Content) {
-      contentValue = content.value;
+      contentValue = content.encodedValue;
     } else {
       contentValue = null;
     }
@@ -61,7 +61,7 @@ final class DataPacket extends NdnPacket {
   TlvType get tlvType => TlvType.data;
 
   @override
-  List<int> get value {
+  List<int> get encodedValue {
     final result = name.encode().toList();
 
     final content = this.content;

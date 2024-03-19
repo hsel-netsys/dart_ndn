@@ -18,11 +18,12 @@ extension ByteExtension on int {
 
 final class Nonce extends KnownTlvElement {
   Nonce([List<int>? value])
-      : value = value ?? List.generate(4, (index) => Random().nextInt(256));
+      : encodedValue =
+            value ?? List.generate(4, (index) => Random().nextInt(256));
 
   bool get isValid =>
-      value.length == 4 &&
-      value.fold(
+      encodedValue.length == 4 &&
+      encodedValue.fold(
         true,
         (wasValidBefore, valueElement) => wasValidBefore && valueElement.isByte,
       );
@@ -31,7 +32,7 @@ final class Nonce extends KnownTlvElement {
   TlvType get tlvType => TlvType.nonce;
 
   @override
-  final List<int> value;
+  final List<int> encodedValue;
 }
 
 final class CanBePrefix extends KnownTlvElement {
@@ -39,7 +40,7 @@ final class CanBePrefix extends KnownTlvElement {
   TlvType get tlvType => TlvType.canBePrefix;
 
   @override
-  List<int> get value => const [];
+  List<int> get encodedValue => const [];
 }
 
 final class MustBeFresh extends KnownTlvElement {
@@ -47,7 +48,7 @@ final class MustBeFresh extends KnownTlvElement {
   TlvType get tlvType => TlvType.mustBeFresh;
 
   @override
-  List<int> get value => const [];
+  List<int> get encodedValue => const [];
 }
 
 final class ForwardingHint extends KnownTlvElement {
@@ -59,7 +60,7 @@ final class ForwardingHint extends KnownTlvElement {
   final List<Name> names;
 
   @override
-  List<int> get value => names.encode().toList();
+  List<int> get encodedValue => names.encode().toList();
 }
 
 final class InterestLifetime extends KnownTlvElement {
@@ -71,7 +72,8 @@ final class InterestLifetime extends KnownTlvElement {
   final Duration duration;
 
   @override
-  List<int> get value => NonNegativeInteger(duration.inMilliseconds).encode();
+  List<int> get encodedValue =>
+      NonNegativeInteger(duration.inMilliseconds).encode();
 }
 
 final class HopLimit extends KnownTlvElement {
@@ -84,5 +86,5 @@ final class HopLimit extends KnownTlvElement {
   final int hopLimit;
 
   @override
-  List<int> get value => [hopLimit];
+  List<int> get encodedValue => [hopLimit];
 }

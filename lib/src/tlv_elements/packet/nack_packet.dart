@@ -33,7 +33,7 @@ final class NackPacket extends LpPacket {
   TlvType get tlvType => TlvType.nack;
 
   @override
-  List<int> get value => [];
+  List<int> get encodedValue => [];
 }
 
 enum NackReasonValue {
@@ -75,5 +75,5 @@ final class NackReason extends KnownTlvElement {
   TlvType get tlvType => TlvType.nackReason;
 
   @override
-  List<int> get value => nackReasonValue.code.encode();
+  List<int> get encodedValue => nackReasonValue.code.encode();
 }
