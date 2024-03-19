@@ -8,7 +8,7 @@
 `dart_ndn` is a basic Named Data Networking (NDN) implementation that can be
 used in Dart and Flutter projects.
 It follows Version 0.3 of the [NDN Packet Specification], and implements the
-link protocol [NDNLPv2] as well as the [NFD Management Protocol] and to be able
+link protocol [NDNLPv2] as well as the [NFD Management Protocol] to be able
 to interact with an NDN Forwarding Daemon (NFD).
 
 [NDN Packet Specification]: https://docs.named-data.net/NDN-packet-spec/0.3/
@@ -32,8 +32,8 @@ On Android, you can install an NFD port from the Google PlayStore.
 
 Having an NFD installed, you can then interact with it using Unix or TCP
 sockets.
-In theory, however, you could also have an NFD running on a different machine
-and then connect via TCP, which might be useful for some testing scenarios.
+In theory, however, you could also have an NFD running on a different host
+and connect via TCP, which might be useful for some testing scenarios.
 
 ## Usage
 
@@ -69,12 +69,6 @@ Future<void> main() async {
 ```
 
 Additional examples can be found in the `example` directory.
-
-## Additional information
-
-<!-- TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more. -->
 
 ## License
 
