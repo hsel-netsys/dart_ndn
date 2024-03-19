@@ -69,8 +69,8 @@ final class DataPacket extends NdnPacket {
       result.addAll(Content(content).encode());
     }
 
-    final dataSignature =
-        DataSignature.create(content ?? [], SignatureType.digestSha256);
+    const signatureType = SignatureType(SignatureTypeValue.digestSha256);
+    final dataSignature = DataSignature.create(content ?? [], signatureType);
 
     result.addAll(dataSignature.encode());
 

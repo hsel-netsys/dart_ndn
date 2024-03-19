@@ -16,7 +16,10 @@ import "signature_type.dart";
 final class SignatureValue extends KnownTlvElement {
   const SignatureValue(this.value);
 
-  factory SignatureValue.sign(List<int> content, SignatureType signatureType) {
+  factory SignatureValue.sign(
+    List<int> content,
+    SignatureTypeValue signatureType,
+  ) {
     final value = _createSignature(content, signatureType);
 
     return SignatureValue(value);
@@ -24,14 +27,14 @@ final class SignatureValue extends KnownTlvElement {
 
   static List<int> _createSignature(
     List<int> content,
-    SignatureType signatureType,
+    SignatureTypeValue signatureType,
   ) {
     final hash = sha256.convert(content).bytes;
 
     switch (signatureType) {
-      case SignatureType.digestSha256:
+      case SignatureTypeValue.digestSha256:
         return hash;
-      case SignatureType.signatureSha256WithEcdsa:
+      case SignatureTypeValue.signatureSha256WithEcdsa:
         // TODO: Obtain private key from keystore?
         final ec = getP256();
         final priv = ec.generatePrivateKey();

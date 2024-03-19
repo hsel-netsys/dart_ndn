@@ -36,7 +36,7 @@ final class InterestSignatureInfo extends KnownTlvElement {
 
   @override
   List<int> get value {
-    final result = signatureType.encode();
+    final result = signatureType.encode().toList();
 
     final tlvElements = [
       keyLocator,
