@@ -20,7 +20,7 @@ import "name_component.dart";
 /// NDN Packet Specification with regard to the [canonical order] of NDN names.
 ///
 /// [canonical order]: https://docs.named-data.net/NDN-packet-spec/current/name.html#canonical-order
-class Name extends KnownTlvElement implements Comparable<Name> {
+final class Name extends KnownTlvElement implements Comparable<Name> {
   const Name(this.nameComponents);
 
   factory Name.fromValue(List<int> value) {

@@ -10,7 +10,7 @@ import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "status.dart";
 
-class ControlResponse extends KnownTlvElement {
+final class ControlResponse extends KnownTlvElement {
   const ControlResponse(
     this.statusCode,
     this.statusText, [

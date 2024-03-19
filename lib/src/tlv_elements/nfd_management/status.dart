@@ -10,7 +10,7 @@ import "../../extensions/non_negative_integer.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 
-class StatusCode extends KnownTlvElement {
+final class StatusCode extends KnownTlvElement {
   const StatusCode(this.code);
 
   factory StatusCode.fromValue(List<int> value) {
@@ -31,7 +31,7 @@ class StatusCode extends KnownTlvElement {
   String toString() => "StatusCode (type: $type): $code";
 }
 
-class StatusText extends KnownTlvElement {
+final class StatusText extends KnownTlvElement {
   const StatusText(this.text);
 
   factory StatusText.fromValue(List<int> value) {

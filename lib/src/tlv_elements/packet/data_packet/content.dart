@@ -7,7 +7,7 @@
 import "../../tlv_element.dart";
 import "../../tlv_type.dart";
 
-class Content extends KnownTlvElement {
+final class Content extends KnownTlvElement {
   const Content(this.value);
 
   @override

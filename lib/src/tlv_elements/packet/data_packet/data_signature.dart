@@ -76,7 +76,7 @@ class DataSignature {
   }
 }
 
-class SignatureInfo extends KnownTlvElement {
+final class SignatureInfo extends KnownTlvElement {
   // TODO: Add KeyLocator
   const SignatureInfo(this.signatureType);
 
@@ -93,7 +93,7 @@ class SignatureInfo extends KnownTlvElement {
 }
 
 // TODO: This only implements DigestSha256 for now
-class SignatureValue extends KnownTlvElement {
+final class SignatureValue extends KnownTlvElement {
   SignatureValue(List<int> content, SignatureType signatureType)
       : value = _createSignature(content, signatureType);
 
