@@ -9,7 +9,7 @@ import "../name/name.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 
-abstract class KeyLocator extends KnownTlvElement {
+abstract base class KeyLocator extends KnownTlvElement {
   const KeyLocator();
 
   factory KeyLocator.fromValue(List<int> value) {

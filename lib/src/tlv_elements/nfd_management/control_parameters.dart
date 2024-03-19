@@ -9,7 +9,7 @@ import "../name/name.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 
-class ControlParameters extends KnownTlvElement {
+final class ControlParameters extends KnownTlvElement {
   const ControlParameters({
     this.name,
   });

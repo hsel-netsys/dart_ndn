@@ -16,7 +16,7 @@ extension ByteExtension on int {
   bool get isByte => this >= 0 && this <= 255;
 }
 
-class Nonce extends KnownTlvElement {
+final class Nonce extends KnownTlvElement {
   Nonce([List<int>? value])
       : value = value ?? List.generate(4, (index) => Random().nextInt(256));
 
@@ -34,7 +34,7 @@ class Nonce extends KnownTlvElement {
   final List<int> value;
 }
 
-class CanBePrefix extends KnownTlvElement {
+final class CanBePrefix extends KnownTlvElement {
   @override
   TlvType get tlvType => TlvType.canBePrefix;
 
@@ -42,7 +42,7 @@ class CanBePrefix extends KnownTlvElement {
   List<int> get value => const [];
 }
 
-class MustBeFresh extends KnownTlvElement {
+final class MustBeFresh extends KnownTlvElement {
   @override
   TlvType get tlvType => TlvType.mustBeFresh;
 
@@ -50,7 +50,7 @@ class MustBeFresh extends KnownTlvElement {
   List<int> get value => const [];
 }
 
-class ForwardingHint extends KnownTlvElement {
+final class ForwardingHint extends KnownTlvElement {
   const ForwardingHint(this.names);
 
   @override
@@ -62,7 +62,7 @@ class ForwardingHint extends KnownTlvElement {
   List<int> get value => names.encode().toList();
 }
 
-class InterestLifetime extends KnownTlvElement {
+final class InterestLifetime extends KnownTlvElement {
   const InterestLifetime(this.duration);
 
   @override
@@ -74,7 +74,7 @@ class InterestLifetime extends KnownTlvElement {
   List<int> get value => NonNegativeInteger(duration.inMilliseconds).encode();
 }
 
-class HopLimit extends KnownTlvElement {
+final class HopLimit extends KnownTlvElement {
   const HopLimit(this.hopLimit);
 
   @override

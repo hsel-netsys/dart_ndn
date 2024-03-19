@@ -22,7 +22,7 @@ import "packet/nack_packet.dart";
 import "tlv_type.dart";
 
 @immutable
-abstract class TlvElement {
+abstract base class TlvElement {
   const TlvElement();
 
   int get type;
@@ -204,7 +204,7 @@ abstract class TlvElement {
   }
 }
 
-abstract class KnownTlvElement extends TlvElement {
+abstract base class KnownTlvElement extends TlvElement {
   const KnownTlvElement();
 
   TlvType get tlvType;
