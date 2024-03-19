@@ -7,7 +7,6 @@
 import "package:meta/meta.dart";
 
 import "../extensions/int_encoding.dart";
-import "certificate/key_locator.dart";
 import "name/name.dart";
 import "name/name_component.dart";
 import "nfd_management/control_parameters.dart";
@@ -19,6 +18,7 @@ import "packet/data_packet/content.dart";
 import "packet/interest_packet.dart";
 import "packet/lp_packet.dart";
 import "packet/nack_packet.dart";
+import "signature/key_locator.dart";
 import "tlv_type.dart";
 
 @immutable

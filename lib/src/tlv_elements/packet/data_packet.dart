@@ -6,9 +6,10 @@
 
 import "../../extensions/bytes_encoding.dart";
 import "../name/name.dart";
+import "../signature/data_signature.dart";
+import "../signature/signature_type.dart";
 import "../tlv_type.dart";
 import "data_packet/content.dart";
-import "data_packet/data_signature.dart";
 import "ndn_packet.dart";
 
 final class DataPacket extends NdnPacket {
