@@ -7,6 +7,7 @@
 import "package:meta/meta.dart";
 
 import "../extensions/int_encoding.dart";
+import "certificate/key_locator.dart";
 import "name/name.dart";
 import "name/name_component.dart";
 import "nfd_management/control_parameters.dart";
@@ -95,6 +96,10 @@ abstract class TlvElement {
         return StatusText.fromValue(value);
       case TlvType.content:
         return Content(value);
+      case TlvType.keyLocator:
+        return KeyLocator.fromValue(value);
+      case TlvType.keyDigest:
+        return KeyDigest(value);
       case TlvType.implicitSha256DigestComponent:
       // TODO: Handle this case.
       case TlvType.parametersSha256DigestComponent:
@@ -138,10 +143,6 @@ abstract class TlvElement {
       case TlvType.finalBlockId:
       // TODO: Handle this case.
       case TlvType.signatureType:
-      // TODO: Handle this case.
-      case TlvType.keyLocator:
-      // TODO: Handle this case.
-      case TlvType.keyDigest:
       // TODO: Handle this case.
       case TlvType.signatureNonce:
       // TODO: Handle this case.
