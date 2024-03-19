@@ -11,7 +11,7 @@ import "../tlv_element.dart";
 import "../tlv_type.dart";
 
 final class StatusCode extends NonNegativeIntegerTlvElement {
-  const StatusCode(super.code);
+  const StatusCode(super.value);
 
   factory StatusCode.fromValue(List<int> value) {
     final intValue = NonNegativeInteger.fromValue(value);
@@ -23,7 +23,7 @@ final class StatusCode extends NonNegativeIntegerTlvElement {
   TlvType get tlvType => TlvType.statusCode;
 
   @override
-  String toString() => "StatusCode (type: $type): $nonNegativeInteger";
+  String toString() => "StatusCode (type: $type): $value";
 }
 
 final class StatusText extends KnownTlvElement {

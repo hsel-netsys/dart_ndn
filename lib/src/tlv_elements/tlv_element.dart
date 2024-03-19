@@ -216,19 +216,21 @@ abstract base class KnownTlvElement extends TlvElement {
 }
 
 abstract base class NonNegativeIntegerTlvElement extends KnownTlvElement {
-  const NonNegativeIntegerTlvElement(this.nonNegativeInteger);
+  const NonNegativeIntegerTlvElement(this.value);
 
-  final NonNegativeInteger nonNegativeInteger;
+  final NonNegativeInteger value;
 
   @override
-  List<int> get encodedValue => nonNegativeInteger.encode();
+  List<int> get encodedValue => value.encode();
 }
 
 abstract base class OctetTlvElement extends KnownTlvElement {
-  const OctetTlvElement(this.encodedValue);
+  const OctetTlvElement(this.value);
+
+  final List<int> value;
 
   @override
-  final List<int> encodedValue;
+  List<int> get encodedValue => value;
 }
 
 final class UnknownTlvElement extends TlvElement {
