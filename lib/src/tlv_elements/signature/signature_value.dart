@@ -14,8 +14,13 @@ import "signature_type.dart";
 
 // TODO: This only implements DigestSha256 for now
 final class SignatureValue extends KnownTlvElement {
-  SignatureValue(List<int> content, SignatureType signatureType)
-      : value = _createSignature(content, signatureType);
+  const SignatureValue(this.value);
+
+  factory SignatureValue.sign(List<int> content, SignatureType signatureType) {
+    final value = _createSignature(content, signatureType);
+
+    return SignatureValue(value);
+  }
 
   static List<int> _createSignature(
     List<int> content,

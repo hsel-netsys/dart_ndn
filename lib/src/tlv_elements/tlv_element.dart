@@ -19,6 +19,7 @@ import "packet/interest_packet.dart";
 import "packet/lp_packet.dart";
 import "packet/nack_packet.dart";
 import "signature/key_locator.dart";
+import "signature/signature_value.dart";
 import "tlv_type.dart";
 
 @immutable
@@ -100,6 +101,8 @@ abstract base class TlvElement {
         return KeyLocator.fromValue(value);
       case TlvType.keyDigest:
         return KeyDigest(value);
+      case TlvType.signatureValue:
+        SignatureValue(value);
       case TlvType.implicitSha256DigestComponent:
       // TODO: Handle this case.
       case TlvType.parametersSha256DigestComponent:
@@ -195,8 +198,6 @@ abstract base class TlvElement {
       case TlvType.nonDiscovery:
       // TODO: Handle this case.
       case TlvType.prefixAnnouncement:
-      // TODO: Handle this case.
-      case TlvType.signatureValue:
       // TODO: Handle this case.
     }
 

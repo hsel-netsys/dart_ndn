@@ -23,7 +23,7 @@ class DataSignature {
 
     final valueToSign = [...value, ...signatureInfo.value];
 
-    final signatureValue = SignatureValue(valueToSign, signatureType);
+    final signatureValue = SignatureValue.sign(valueToSign, signatureType);
 
     return DataSignature(signatureInfo, signatureValue);
   }
