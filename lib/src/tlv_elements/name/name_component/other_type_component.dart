@@ -6,25 +6,8 @@
 
 part of "../name_component.dart";
 
-// TODO: Differentiate TLV-VALUE Format, see https://redmine.named-data.net/projects/ndn-tlv/wiki/NameComponentType
-// TODO: Support Alternate Uri-Format, see https://redmine.named-data.net/projects/ndn-tlv/wiki/NameComponentType
-
-/// This class serves as the basis for [NameComponent]s of other component types
-/// governed by the [Name Component Assignment policy].
-///
-/// [Name Component Assignment policy]: https://redmine.named-data.net/projects/ndn-tlv/wiki/NameComponentType
-sealed class OtherTypeComponent extends NameComponent {
-  const OtherTypeComponent(this.encodedValue);
-
-  @override
-  final List<int> encodedValue;
-
-  @override
-  TlvValueFormat get tlvValueFormat => TlvValueFormat.nonNegativeInteger;
-}
-
-final class KeywordNameComponent extends OtherTypeComponent {
-  const KeywordNameComponent(super.encodedValue);
+final class KeywordNameComponent extends NameComponent {
+  const KeywordNameComponent(this.encodedValue);
 
   static Result<KeywordNameComponent> fromValue(List<int> value) {
     // TODO: Are there any requirements for this type?
@@ -32,43 +15,117 @@ final class KeywordNameComponent extends OtherTypeComponent {
   }
 
   @override
-  TlvType get tlvType => TlvType.keywordNameComponent;
+  final List<int> encodedValue;
 
   @override
-  TlvValueFormat get tlvValueFormat => TlvValueFormat.octetStar;
+  TlvType get tlvType => TlvType.keywordNameComponent;
 }
 
-final class SegmentNameComponent extends OtherTypeComponent {
+sealed class NonNegativeIntegerNameComponent extends NameComponent {
+  const NonNegativeIntegerNameComponent(this.value);
+
+  final NonNegativeInteger value;
+
+  @override
+  List<int> get encodedValue => value.encode();
+}
+
+final class SegmentNameComponent extends NonNegativeIntegerNameComponent {
   const SegmentNameComponent(super.encodedValue);
+
+  static Result<SegmentNameComponent> fromValue(List<int> value) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(SegmentNameComponent(tlvElement));
+      case Fail(:final exception):
+        return Fail(exception);
+    }
+  }
 
   @override
   TlvType get tlvType => TlvType.segmentNameComponent;
+
+  @override
+  String toPathSegment() => "seg=$percentEncodedValue";
 }
 
-final class ByteOffsetNameComponent extends OtherTypeComponent {
+final class ByteOffsetNameComponent extends NonNegativeIntegerNameComponent {
   const ByteOffsetNameComponent(super.encodedValue);
+
+  static Result<ByteOffsetNameComponent> fromValue(List<int> value) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(ByteOffsetNameComponent(tlvElement));
+      case Fail(:final exception):
+        return Fail(exception);
+    }
+  }
 
   @override
   TlvType get tlvType => TlvType.byteOffsetNameComponent;
+
+  @override
+  String toPathSegment() => "off=$percentEncodedValue";
 }
 
-final class VersionNameComponent extends OtherTypeComponent {
+final class VersionNameComponent extends NonNegativeIntegerNameComponent {
   const VersionNameComponent(super.encodedValue);
+
+  static Result<VersionNameComponent> fromValue(List<int> value) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(VersionNameComponent(tlvElement));
+      case Fail(:final exception):
+        return Fail(exception);
+    }
+  }
 
   @override
   TlvType get tlvType => TlvType.versionNameComponent;
+
+  @override
+  String toPathSegment() => "v=$percentEncodedValue";
 }
 
-final class TimestampNameComponent extends OtherTypeComponent {
+final class TimestampNameComponent extends NonNegativeIntegerNameComponent {
   const TimestampNameComponent(super.encodedValue);
+
+  static Result<TimestampNameComponent> fromValue(List<int> value) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(TimestampNameComponent(tlvElement));
+      case Fail(:final exception):
+        return Fail(exception);
+    }
+  }
 
   @override
   TlvType get tlvType => TlvType.timestampNameComponent;
+
+  @override
+  String toPathSegment() => "t=$percentEncodedValue";
 }
 
-final class SequenceNumNameComponent extends OtherTypeComponent {
+final class SequenceNumNameComponent extends NonNegativeIntegerNameComponent {
   const SequenceNumNameComponent(super.encodedValue);
+
+  static Result<SequenceNumNameComponent> fromValue(List<int> value) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(SequenceNumNameComponent(tlvElement));
+      case Fail(:final exception):
+        return Fail(exception);
+    }
+  }
 
   @override
   TlvType get tlvType => TlvType.sequenceNumNameComponent;
+
+  @override
+  String toPathSegment() => "t=$percentEncodedValue";
 }

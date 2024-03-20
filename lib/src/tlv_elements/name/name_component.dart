@@ -4,12 +4,11 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "dart:convert";
-
 import "package:collection/collection.dart";
+import "package:convert/convert.dart";
 import "package:meta/meta.dart";
 
-import "../nfd_management/control_parameters.dart";
+import "../../extensions/non_negative_integer.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 
@@ -18,28 +17,27 @@ part "name_component/implicit_sha_256_digest_component.dart";
 part "name_component/other_type_component.dart";
 part "name_component/parameters_sha_256_digest_component.dart";
 
-enum TlvValueFormat {
-  octet32,
-  octetStar,
-  nonNegativeInteger,
-  ;
-}
-
 @immutable
 sealed class NameComponent extends KnownTlvElement
     implements Comparable<NameComponent> {
   const NameComponent();
 
-  TlvValueFormat get tlvValueFormat;
+  @internal
+  // TODO: Revisit percent encoding
+  String get percentEncodedValue {
+    final encodingResult = percent.encode(encodedValue);
 
-  static NameComponent? tryFromValue(List<int> value) {
-    try {
-      final nameComponentString = utf8.decode(value);
-      return GenericNameComponent(nameComponentString);
-    } on FormatException {
-      return null;
+    switch (encodingResult) {
+      case ".":
+        return "...";
+      case "..":
+        return "....";
+      default:
+        return encodingResult;
     }
   }
+
+  String toPathSegment() => "$type=$percentEncodedValue";
 
   @override
   int compareTo(NameComponent other) {

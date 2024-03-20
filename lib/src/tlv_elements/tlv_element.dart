@@ -16,9 +16,11 @@ import "nfd_management/status.dart";
 import "nonce.dart";
 import "packet/data_packet.dart";
 import "packet/data_packet/content.dart";
+import "packet/data_packet/meta_info.dart";
 import "packet/interest_packet.dart";
 import "packet/lp_packet.dart";
 import "packet/nack_packet.dart";
+import "signature/interest_signature_info.dart";
 import "signature/key_locator.dart";
 import "signature/signature_time.dart";
 import "signature/signature_type.dart";
@@ -139,88 +141,88 @@ abstract base class TlvElement {
       case TlvType.canBePrefix:
         return CanBePrefix.fromValue(value);
       case TlvType.segmentNameComponent:
-      // TODO: Handle this case.
+        return SegmentNameComponent.fromValue(value);
       case TlvType.byteOffsetNameComponent:
-      // TODO: Handle this case.
+        return ByteOffsetNameComponent.fromValue(value);
       case TlvType.versionNameComponent:
-      // TODO: Handle this case.
+        return VersionNameComponent.fromValue(value);
       case TlvType.timestampNameComponent:
-      // TODO: Handle this case.
+        return TimestampNameComponent.fromValue(value);
       case TlvType.sequenceNumNameComponent:
-      // TODO: Handle this case.
+        return SequenceNumNameComponent.fromValue(value);
       case TlvType.forwardingHint:
-      // TODO: Handle this case.
+        return ForwardingHint.fromValue(value);
       case TlvType.interestLifetime:
-      // TODO: Handle this case.
-      case TlvType.applicationParameters:
-      // TODO: Handle this case.
+        return InterestLifetime.fromValue(value);
+      // case TlvType.applicationParameters:
+      //   return ApplicationParameters.fromValue(value);
       case TlvType.interestSignatureInfo:
-      // TODO: Handle this case.
-      case TlvType.interestSignatureValue:
-      // TODO: Handle this case.
+        return InterestSignatureInfo.fromValue(value);
+      // case TlvType.interestSignatureValue:
+      //   return InterestSignatureValue.fromValue(value);
       case TlvType.metaInfo:
-      // TODO: Handle this case.
-      case TlvType.signatureInfo:
-      // TODO: Handle this case.
-      case TlvType.contentType:
-      // TODO: Handle this case.
-      case TlvType.freshnessPeriod:
-      // TODO: Handle this case.
-      case TlvType.finalBlockId:
-      // TODO: Handle this case.
-      case TlvType.signatureNonce:
-      // TODO: Handle this case.
-      case TlvType.signatureSeqNum:
-      // TODO: Handle this case.
-      case TlvType.validityPeriod:
-      // TODO: Handle this case.
-      case TlvType.notBefore:
-      // TODO: Handle this case.
-      case TlvType.notAfter:
-      // TODO: Handle this case.
-      case TlvType.additionalDescription:
-      // TODO: Handle this case.
-      case TlvType.descriptionEntry:
-      // TODO: Handle this case.
-      case TlvType.descriptionKey:
-      // TODO: Handle this case.
-      case TlvType.descriptionValue:
-      // TODO: Handle this case.
-      case TlvType.fragment:
-      // TODO: Handle this case.
-      case TlvType.sequence:
-      // TODO: Handle this case.
-      case TlvType.fragIndex:
-      // TODO: Handle this case.
-      case TlvType.fragCount:
-      // TODO: Handle this case.
-      case TlvType.hopCount:
-      // TODO: Handle this case.
-      case TlvType.geoTag:
-      // TODO: Handle this case.
-      case TlvType.pitToken:
-      // TODO: Handle this case.
-      case TlvType.incomingFaceId:
-      // TODO: Handle this case.
-      case TlvType.nextHopFaceId:
-      // TODO: Handle this case.
-      case TlvType.cachePolicy:
-      // TODO: Handle this case.
-      case TlvType.cachePolicyType:
-      // TODO: Handle this case.
-      case TlvType.congestionMark:
-      // TODO: Handle this case.
-      case TlvType.ack:
-      // TODO: Handle this case.
-      case TlvType.txSequence:
-      // TODO: Handle this case.
-      case TlvType.nonDiscovery:
-      // TODO: Handle this case.
-      case TlvType.prefixAnnouncement:
-      // TODO: Handle this case.
+        return MetaInfo.fromValue(value);
+      // case TlvType.signatureInfo:
+      //   return SignatureInfo.fromValue(value);
+      // case TlvType.contentType:
+      //   return ContentType.fromValue(value);
+      // case TlvType.freshnessPeriod:
+      //   return FreshnessPeriod.fromValue(value);
+      // case TlvType.finalBlockId:
+      //   return FinalBlockId.fromValue(value);
+      // case TlvType.signatureNonce:
+      //   return SignatureNonce.fromValue();
+      // case TlvType.signatureSeqNum:
+      //   return SignatureSeqNum.fromValue(value);
+      // case TlvType.validityPeriod:
+      //   return ValidatyPeriod.fromValue(value);
+      // case TlvType.notBefore:
+      //   return NotBefore.fromValue(value);
+      // case TlvType.notAfter:
+      //   return NotAfter.fromValue(value);
+      // case TlvType.additionalDescription:
+      //   return AdditionalDescription.fromValue(value);
+      // case TlvType.descriptionEntry:
+      //   return DescriptionEntry.fromValue(value);
+      // case TlvType.descriptionKey:
+      //   return DescriptionKey.fromValue(value);
+      // case TlvType.descriptionValue:
+      //   return DescriptionValue.fromValue(value);
+      // case TlvType.fragment:
+      //   return Fragment.fromValue(value);
+      // case TlvType.sequence:
+      //   return Sequence.fromValue(value);
+      // case TlvType.fragIndex:
+      //   return FragIndex.fromValue(value);
+      // case TlvType.fragCount:
+      //   return FragCount.fromValue(value);
+      // case TlvType.hopCount:
+      //   return HopCount.fromValue(value);
+      // case TlvType.geoTag:
+      //   return GeoTag.fromValue(value);
+      // case TlvType.pitToken:
+      //   return PitToken.fromValue(value);
+      // case TlvType.incomingFaceId:
+      //   return IncomingFaceId.fromValue(value);
+      // case TlvType.nextHopFaceId:
+      //   return NextHopFaceId.fromValue(value);
+      // case TlvType.cachePolicy:
+      //   return CachePolicy.fromValue(value);
+      // case TlvType.cachePolicyType:
+      //   return CachePolicyType.fromValue(value);
+      // case TlvType.congestionMark:
+      //   return CongestionMark.fromValue(value);
+      // case TlvType.ack:
+      //   return Ack.fromValue(value);
+      // case TlvType.txSequence:
+      //   return TxSequence.fromValue(value);
+      // case TlvType.nonDiscovery:
+      //   return NonDiscovery.fromValue(value);
+      // case TlvType.prefixAnnouncement:
+      //   return PrefixAnnouncement.fromValue(value);
+      default:
+        return Success(UnknownTlvElement(type, value));
     }
-
-    return Success(UnknownTlvElement(type, value));
   }
 }
 

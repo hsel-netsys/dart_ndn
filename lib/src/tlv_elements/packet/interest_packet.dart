@@ -4,6 +4,8 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:convert/convert.dart";
+
 import "../../extensions/bytes_encoding.dart";
 import "../name/name.dart";
 import "../name/name_component.dart";
@@ -143,8 +145,9 @@ extension NameComponentExtension on String {
 
     final result = <NameComponent>[];
 
+    // TODO: Deal with other namecomponents
     for (final component in components) {
-      result.add(GenericNameComponent(component));
+      result.add(GenericNameComponent(percent.decode(component)));
     }
 
     return result;

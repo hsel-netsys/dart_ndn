@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "../../extensions/bytes_encoding.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "key_locator.dart";
@@ -52,5 +53,19 @@ final class InterestSignatureInfo extends KnownTlvElement {
     }
 
     return result;
+  }
+
+  static Result<InterestSignatureInfo> fromValue(List<int> value) {
+    final tlvElements = value.toTvlElements();
+
+    switch (tlvElements.firstOrNull) {
+      case Success<SignatureType>(:final tlvElement):
+        // TODO: Also deal with the other potential fields
+        return Success(InterestSignatureInfo(tlvElement));
+      case Fail(:final exception):
+        return Fail(exception);
+      default:
+        return Fail(const FormatException("Missing SignatureType TlvElement"));
+    }
   }
 }

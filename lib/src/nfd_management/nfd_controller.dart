@@ -8,7 +8,6 @@ import "../extensions/bytes_encoding.dart";
 import "../face.dart";
 import "../result/interest_expression_result.dart";
 import "../tlv_elements/name/name.dart";
-import "../tlv_elements/name/name_component.dart";
 import "../tlv_elements/nfd_management/control_parameters.dart";
 import "../tlv_elements/nfd_management/control_response.dart";
 import "../tlv_elements/packet/interest_packet.dart";
@@ -20,8 +19,10 @@ class NfdController {
   final Face _face;
 
   Future<void> registerRoute(Name prefix) async {
-    final nameComponents = "/localhost/nfd/rib/register".toNameComponents()
-      ..add(ControlParametersNameComponent(ControlParameters(name: prefix)));
+    final nameComponents = [
+      ..."/localhost/nfd/rib/register".toNameComponents(),
+      ControlParameters(name: prefix).asNameComponent(),
+    ];
     final name = Name(nameComponents);
 
     final interest = InterestPacket.fromName(name);

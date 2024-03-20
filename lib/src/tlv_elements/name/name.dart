@@ -5,7 +5,6 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "package:collection/collection.dart";
-import "package:convert/convert.dart";
 
 import "../../extensions/bytes_encoding.dart";
 import "../../extensions/tlv_element_encoding.dart";
@@ -42,33 +41,7 @@ final class Name extends KnownTlvElement implements Comparable<Name> {
   List<int> get encodedValue => nameComponents.encode().toList();
 
   Uri toUri() {
-    final pathSegments = <String>[];
-
-    for (final nameComponent in nameComponents) {
-      final value = nameComponent.encodedValue;
-      final String pathSegmentValue;
-      switch (nameComponent.tlvValueFormat) {
-        case TlvValueFormat.octetStar:
-          pathSegmentValue = percent.encode(value);
-        case TlvValueFormat.octet32:
-          pathSegmentValue = hex.encode(value);
-        case TlvValueFormat.nonNegativeInteger:
-          throw UnimplementedError();
-      }
-
-      final String pathSegment;
-
-      if (nameComponent is GenericNameComponent) {
-        pathSegment = pathSegmentValue;
-      } else {
-        pathSegment = [
-          nameComponent.type.toString(),
-          pathSegmentValue,
-        ].join("=");
-      }
-
-      pathSegments.add(pathSegment);
-    }
+    final pathSegments = nameComponents.map((e) => e.toPathSegment());
 
     return Uri(
       scheme: "ndn",

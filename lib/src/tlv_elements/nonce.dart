@@ -6,6 +6,7 @@
 
 import "dart:math";
 
+import "../extensions/bytes_encoding.dart";
 import "../extensions/non_negative_integer.dart";
 import "../extensions/tlv_element_encoding.dart";
 import "name/name.dart";
@@ -97,6 +98,27 @@ final class ForwardingHint extends KnownTlvElement {
 
   @override
   List<int> get encodedValue => names.encode().toList();
+
+  static Result<ForwardingHint> fromValue(List<int> value) {
+    final tlvElements = value.toTvlElements();
+
+    final List<Name> names = [];
+
+    for (final tlvElement in tlvElements) {
+      switch (tlvElement) {
+        case Success<Name>(:final tlvElement):
+          names.add(tlvElement);
+        case Fail(:final exception):
+          return Fail(exception);
+        default:
+          return Fail(
+            const FormatException("Encountered a non-name TlvElement"),
+          );
+      }
+    }
+
+    return Success(ForwardingHint(names));
+  }
 }
 
 final class InterestLifetime extends KnownTlvElement {
@@ -110,6 +132,17 @@ final class InterestLifetime extends KnownTlvElement {
   @override
   List<int> get encodedValue =>
       NonNegativeInteger(duration.inMilliseconds).encode();
+
+  static Result<TlvElement> fromValue(List<int> value) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        final duration = Duration(milliseconds: tlvElement);
+        return Success(InterestLifetime(duration));
+      case Fail(:final exception):
+        return Fail(exception);
+    }
+  }
 }
 
 final class HopLimit extends KnownTlvElement {

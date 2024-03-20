@@ -8,6 +8,7 @@
 library named_data_dart;
 
 export "src/consumer.dart";
+export "src/extensions/non_negative_integer.dart";
 export "src/producer.dart";
 export "src/result/interest_expression_result.dart";
 export "src/tlv_elements/name/name.dart";

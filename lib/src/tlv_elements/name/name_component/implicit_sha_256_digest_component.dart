@@ -43,5 +43,5 @@ final class ImplicitSha256DigestComponent extends NameComponent {
   bool get isValid => length == _digestLength;
 
   @override
-  TlvValueFormat get tlvValueFormat => TlvValueFormat.octet32;
+  String toPathSegment() => "params-sha256=${hex.encode(encodedValue)}";
 }

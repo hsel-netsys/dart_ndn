@@ -6,6 +6,7 @@
 
 import "../../extensions/bytes_encoding.dart";
 import "../name/name.dart";
+import "../name/name_component.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 
@@ -36,5 +37,9 @@ final class ControlParameters extends KnownTlvElement {
     }
 
     return encodedValue;
+  }
+
+  GenericNameComponent asNameComponent() {
+    return GenericNameComponent(encode());
   }
 }
