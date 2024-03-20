@@ -13,10 +13,16 @@ import "../tlv_type.dart";
 final class StatusCode extends NonNegativeIntegerTlvElement {
   const StatusCode(super.value);
 
-  factory StatusCode.fromValue(List<int> value) {
+  static Result<StatusCode> fromValue(List<int> value) {
     final intValue = NonNegativeInteger.fromValue(value);
 
-    return StatusCode(intValue);
+    switch (intValue) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(StatusCode(tlvElement));
+      case Fail(:final exception):
+        return Fail(exception);
+    }
   }
 
   @override
@@ -29,10 +35,13 @@ final class StatusCode extends NonNegativeIntegerTlvElement {
 final class StatusText extends KnownTlvElement {
   const StatusText(this.text);
 
-  factory StatusText.fromValue(List<int> value) {
-    final text = utf8.decode(value);
-
-    return StatusText(text);
+  static Result<StatusText> fromValue(List<int> value) {
+    try {
+      final text = utf8.decode(value);
+      return Success(StatusText(text));
+    } on Exception catch (exception) {
+      return Fail(exception);
+    }
   }
 
   final String text;

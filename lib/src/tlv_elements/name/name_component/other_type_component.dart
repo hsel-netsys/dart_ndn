@@ -26,6 +26,11 @@ sealed class OtherTypeComponent extends NameComponent {
 final class KeywordNameComponent extends OtherTypeComponent {
   const KeywordNameComponent(super.encodedValue);
 
+  static Result<KeywordNameComponent> fromValue(List<int> value) {
+    // TODO: Are there any requirements for this type?
+    return Success(KeywordNameComponent(value));
+  }
+
   @override
   TlvType get tlvType => TlvType.keywordNameComponent;
 

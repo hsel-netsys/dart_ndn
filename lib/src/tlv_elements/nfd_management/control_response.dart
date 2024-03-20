@@ -17,25 +17,56 @@ final class ControlResponse extends KnownTlvElement {
     this.body = const [],
   ]);
 
-  factory ControlResponse.fromValue(List<int> value) {
+  static Result<ControlResponse> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements().toList(growable: false);
     final List<TlvElement> body = [];
 
-    final statusCode = tlvElements.firstOrNull;
-    final statusText = tlvElements.elementAtOrNull(1);
+    final StatusCode statusCode;
 
-    if (statusCode is! StatusCode || statusText is! StatusText) {
-      throw const FormatException("Invalid format for ControlResponse");
+    switch (tlvElements.firstOrNull) {
+      case Success<StatusCode>(:final tlvElement):
+        statusCode = tlvElement;
+      case Fail<StatusCode>(:final exception):
+        return Fail(exception);
+
+      default:
+        return Fail(
+          const FormatException("Invalid format for ControlResponse"),
+        );
+    }
+
+    final StatusText statusText;
+
+    switch (tlvElements.elementAtOrNull(1)) {
+      case Success<StatusText>(:final tlvElement):
+        statusText = tlvElement;
+      case Fail<StatusText>(:final exception):
+        return Fail(exception);
+
+      default:
+        return Fail(
+          const FormatException("Invalid format for ControlResponse"),
+        );
     }
 
     if (tlvElements.length > 2) {
-      body.addAll(tlvElements.sublist(2));
+      for (final tlvElement in tlvElements.sublist(2)) {
+        switch (tlvElement) {
+          case Success(:final tlvElement):
+            body.add(tlvElement);
+          case Fail(:final exception):
+            // TODO: Differentiate between critical and non-critical
+            return Fail(exception);
+        }
+      }
     }
 
-    return ControlResponse(
-      statusCode,
-      statusText,
-      body,
+    return Success(
+      ControlResponse(
+        statusCode,
+        statusText,
+        body,
+      ),
     );
   }
 

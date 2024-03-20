@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "../../extensions/bytes_encoding.dart";
+import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "nack_packet.dart";
 import "ndn_packet.dart";
@@ -12,25 +13,17 @@ import "ndn_packet.dart";
 base class LpPacket extends NdnPacket {
   const LpPacket();
 
-  // TODO: Refactor
-  factory LpPacket.fromValue(List<int> value) {
+  // TODO: Refactor and actually implement...
+  static Result<LpPacket> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements().toList();
 
-    if (tlvElements.isEmpty) {
-      return const LpPacket();
-    }
-
-    final type = TlvType.tryParse(tlvElements.first.type);
-
-    if (type == null) {
-      return const LpPacket();
-    }
-
-    switch (type) {
-      case TlvType.nack:
-        return const NackPacket();
+    switch (tlvElements.firstOrNull) {
+      case Success<NackPacket>(:final tlvElement):
+        return Success(tlvElement);
+      case Fail(:final exception):
+        return Fail(exception);
       default:
-        return const LpPacket();
+        return Success(const LpPacket());
     }
   }
 

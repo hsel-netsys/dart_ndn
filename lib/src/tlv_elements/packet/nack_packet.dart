@@ -13,18 +13,19 @@ import "lp_packet.dart";
 final class NackPacket extends LpPacket {
   const NackPacket([this.nackReason]);
 
-  factory NackPacket.fromValue(List<int> value) {
+  static Result<NackPacket> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
     NackReason? nackReason;
 
     for (final tlvElement in tlvElements) {
-      if (tlvElement is NackReason) {
-        nackReason ??= tlvElement;
+      if (tlvElement is Success<NackReason>) {
+        nackReason ??= tlvElement.tlvElement;
       }
+      // TODO: Deal with critical fails
     }
 
-    return NackPacket(nackReason);
+    return Success(NackPacket(nackReason));
   }
 
   final NackReason? nackReason;
@@ -37,17 +38,15 @@ final class NackPacket extends LpPacket {
 }
 
 enum NackReasonValue {
-  none(0),
-  congestion(50),
-  duplicate(100),
-  noRoute(150),
+  none(NonNegativeInteger.fromInt(0)),
+  congestion(NonNegativeInteger.fromInt(50)),
+  duplicate(NonNegativeInteger.fromInt(100)),
+  noRoute(NonNegativeInteger.fromInt(150)),
   ;
 
-  const NackReasonValue(this._code);
+  const NackReasonValue(this.code);
 
-  final int _code;
-
-  NonNegativeInteger get code => NonNegativeInteger(_code);
+  final NonNegativeInteger code;
 
   static final Map<int, NackReasonValue> _registry =
       Map.fromEntries(values.map((e) => MapEntry(e.code, e)));
@@ -58,12 +57,15 @@ enum NackReasonValue {
 final class NackReason extends KnownTlvElement {
   const NackReason([this._nackReasonValue]);
 
-  factory NackReason.fromValue(List<int> value) {
-    final nonNegativeInteger = NonNegativeInteger.fromValue(value);
-
-    final nackReasonValue = NackReasonValue.tryParse(nonNegativeInteger);
-
-    return NackReason(nackReasonValue);
+  static Result<NackReason> fromValue(List<int> value) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        final nackReasonValue = NackReasonValue.tryParse(tlvElement.value);
+        return Success(NackReason(nackReasonValue));
+      case Fail(:final exception):
+        return Fail(exception);
+    }
   }
 
   final NackReasonValue? _nackReasonValue;

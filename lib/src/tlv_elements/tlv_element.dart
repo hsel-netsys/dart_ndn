@@ -20,8 +20,24 @@ import "packet/interest_packet.dart";
 import "packet/lp_packet.dart";
 import "packet/nack_packet.dart";
 import "signature/key_locator.dart";
+import "signature/signature_time.dart";
+import "signature/signature_type.dart";
 import "signature/signature_value.dart";
 import "tlv_type.dart";
+
+sealed class Result<T> {}
+
+final class Success<T> extends Result<T> {
+  Success(this.tlvElement);
+
+  final T tlvElement;
+}
+
+final class Fail<T> extends Result<T> {
+  Fail(this.exception);
+
+  final Exception exception;
+}
 
 @immutable
 abstract base class TlvElement {
@@ -29,15 +45,17 @@ abstract base class TlvElement {
 
   int get type;
 
+  bool get isCritical => type <= 31 || type & 1 == 1;
+
   int get length => encodedValue.length;
 
   List<int> get encodedValue;
 
-  Iterable<int> encode() sync* {
-    yield* type.encodeAsNdnTlv();
-    yield* length.encodeAsNdnTlv();
-    yield* encodedValue;
-  }
+  List<int> encode() => [
+        ...type.encodeAsNdnTlv(),
+        ...length.encodeAsNdnTlv(),
+        ...encodedValue,
+      ];
 
   @override
   int get hashCode => Object.hashAll([type, encodedValue]);
@@ -63,11 +81,11 @@ abstract base class TlvElement {
     return true;
   }
 
-  static TlvElement parse(int type, List<int> value) {
+  static Result<TlvElement> parse(int type, List<int> value) {
     final parsedTlvType = TlvType.tryParse(type);
 
     if (parsedTlvType == null) {
-      return UnknownTlvElement(type, value);
+      return Success(UnknownTlvElement(type, value));
     }
 
     // TODO: Create classes for all defined TlvElements...
@@ -87,7 +105,7 @@ abstract base class TlvElement {
       case TlvType.nackReason:
         return NackReason.fromValue(value);
       case TlvType.nonce:
-        return Nonce(value);
+        return Nonce.fromValue(value);
       case TlvType.controlParameters:
         return ControlParameters.fromValue(value);
       case TlvType.controlResponse:
@@ -97,19 +115,29 @@ abstract base class TlvElement {
       case TlvType.statusText:
         return StatusText.fromValue(value);
       case TlvType.content:
-        return Content(value);
+        return Content.fromValue(value);
       case TlvType.keyLocator:
         return KeyLocator.fromValue(value);
       case TlvType.keyDigest:
-        return KeyDigest(value);
+        return Success(KeyDigest(value));
       case TlvType.signatureValue:
-        SignatureValue(value);
+        return Success(SignatureValue(value));
+      case TlvType.signatureType:
+        return SignatureType.fromValue(value);
+      case TlvType.hopLimit:
+        return HopLimit.fromValue(value);
+      case TlvType.signatureTime:
+        return SignatureTime.fromValue(value);
+      case TlvType.mustBeFresh:
+        return MustBeFresh.fromValue(value);
       case TlvType.implicitSha256DigestComponent:
-      // TODO: Handle this case.
+        return ImplicitSha256DigestComponent.fromValue(value);
       case TlvType.parametersSha256DigestComponent:
-      // TODO: Handle this case.
+        return ParametersSha256DigestComponent.fromValue(value);
       case TlvType.keywordNameComponent:
-      // TODO: Handle this case.
+        return KeywordNameComponent.fromValue(value);
+      case TlvType.canBePrefix:
+        return CanBePrefix.fromValue(value);
       case TlvType.segmentNameComponent:
       // TODO: Handle this case.
       case TlvType.byteOffsetNameComponent:
@@ -120,15 +148,9 @@ abstract base class TlvElement {
       // TODO: Handle this case.
       case TlvType.sequenceNumNameComponent:
       // TODO: Handle this case.
-      case TlvType.canBePrefix:
-      // TODO: Handle this case.
-      case TlvType.mustBeFresh:
-      // TODO: Handle this case.
       case TlvType.forwardingHint:
       // TODO: Handle this case.
       case TlvType.interestLifetime:
-      // TODO: Handle this case.
-      case TlvType.hopLimit:
       // TODO: Handle this case.
       case TlvType.applicationParameters:
       // TODO: Handle this case.
@@ -146,11 +168,7 @@ abstract base class TlvElement {
       // TODO: Handle this case.
       case TlvType.finalBlockId:
       // TODO: Handle this case.
-      case TlvType.signatureType:
-      // TODO: Handle this case.
       case TlvType.signatureNonce:
-      // TODO: Handle this case.
-      case TlvType.signatureTime:
       // TODO: Handle this case.
       case TlvType.signatureSeqNum:
       // TODO: Handle this case.
@@ -202,7 +220,7 @@ abstract base class TlvElement {
       // TODO: Handle this case.
     }
 
-    return UnknownTlvElement(type, value);
+    return Success(UnknownTlvElement(type, value));
   }
 }
 
@@ -211,8 +229,24 @@ abstract base class KnownTlvElement extends TlvElement {
 
   TlvType get tlvType;
 
+  bool get isValid => true;
+
   @override
   int get type => tlvType.number;
+}
+
+abstract base class FlagTlvElement extends KnownTlvElement {
+  const FlagTlvElement() : value = const <int>[];
+
+  const FlagTlvElement.fromValue(this.value);
+
+  @override
+  bool get isValid => value.isEmpty;
+
+  final List<int> value;
+
+  @override
+  List<int> get encodedValue => const [];
 }
 
 abstract base class NonNegativeIntegerTlvElement extends KnownTlvElement {

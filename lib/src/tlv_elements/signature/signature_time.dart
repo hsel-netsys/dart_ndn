@@ -11,12 +11,15 @@ import "../tlv_type.dart";
 final class SignatureTime extends KnownTlvElement {
   const SignatureTime(this.signatureTime);
 
-  factory SignatureTime.fromValue(List<int> value) {
-    final decodedValue = NonNegativeInteger.fromValue(value);
-
-    final signatureTime = DateTime.fromMillisecondsSinceEpoch(decodedValue);
-
-    return SignatureTime(signatureTime);
+  static Result<SignatureTime> fromValue(List<int> value) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        final signatureTime = DateTime.fromMillisecondsSinceEpoch(tlvElement);
+        return Success(SignatureTime(signatureTime));
+      case Fail(:final exception):
+        return Fail(exception);
+    }
   }
 
   final DateTime signatureTime;

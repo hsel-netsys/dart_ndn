@@ -9,7 +9,8 @@ import "dart:typed_data";
 import "../tlv_elements/tlv_element.dart";
 
 extension BytesDecoder on List<int> {
-  Iterable<TlvElement> toTvlElements() sync* {
+  Iterable<Result<TlvElement>> toTvlElements() {
+    final result = <Result<TlvElement>>[];
     int? type;
     int? typeLength;
     final typeBytes = <int>[];
@@ -80,7 +81,15 @@ extension BytesDecoder on List<int> {
         }
 
         if (byte == 0) {
-          yield TlvElement.parse(type, value);
+          final parsedTlvElement = TlvElement.parse(type, [...value]);
+
+          switch (parsedTlvElement) {
+            case Success():
+              result.add(parsedTlvElement);
+            case Fail(:final exception):
+              result.add(Fail(exception));
+          }
+
           type = null;
           length = null;
           continue;
@@ -108,12 +117,22 @@ extension BytesDecoder on List<int> {
       }
 
       if (length == 0) {
-        yield TlvElement.parse(type, value);
+        final parsedTlvElement = TlvElement.parse(type, [...value]);
+
+        switch (parsedTlvElement) {
+          case Success():
+            result.add(parsedTlvElement);
+          case Fail(:final exception):
+            result.add(Fail(exception));
+        }
+
         type = null;
         length = null;
         value.clear();
       }
     }
+
+    return result;
   }
 
   int? get tlvTypeLength {

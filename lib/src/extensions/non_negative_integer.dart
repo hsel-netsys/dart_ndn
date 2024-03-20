@@ -6,9 +6,19 @@
 
 import "dart:typed_data";
 
+import "package:meta/meta.dart";
+
+import "../tlv_elements/tlv_element.dart";
+
 extension type NonNegativeInteger(int value) implements int {
-  // TODO: Could also be turned into a "tryParse" static method
-  factory NonNegativeInteger.fromValue(List<int> value) {
+  /// Const constructor.
+  ///
+  /// When using this constructor, the caller has to make sure that the value
+  /// is non-negative, otherwise bad things might happen.
+  @internal
+  const NonNegativeInteger.fromInt(this.value);
+
+  static Result<NonNegativeInteger> fromValue(List<int> value) {
     final int decodedValue;
 
     if (value.length == 1) {
@@ -25,21 +35,25 @@ extension type NonNegativeInteger(int value) implements int {
         case 8:
           decodedValue = byteData.getUint64(0);
         default:
-          throw FormatException(
-            "Expected a byte length of either 1, 2, 4, or 8, "
-            "encountered $length",
+          return Fail(
+            FormatException(
+              "Expected a byte length of either 1, 2, 4, or 8, "
+              "encountered $length",
+            ),
           );
       }
     }
     final result = NonNegativeInteger(decodedValue);
 
     if (!result.isValid) {
-      throw FormatException(
-        "Expected a non-negative integer, encountered $result",
+      Fail(
+        FormatException(
+          "Expected a non-negative integer, encountered $result",
+        ),
       );
     }
 
-    return result;
+    return Success(result);
   }
 
   bool get isValid => !value.isNegative;

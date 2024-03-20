@@ -14,10 +14,11 @@ final class ControlParameters extends KnownTlvElement {
     this.name,
   });
 
-  factory ControlParameters.fromValue(List<int> value) {
+  static Result<ControlParameters> fromValue(List<int> value) {
+    // TODO: Implement
     final _ = value.toTvlElements();
 
-    return const ControlParameters();
+    return Success(const ControlParameters());
   }
 
   final Name? name;

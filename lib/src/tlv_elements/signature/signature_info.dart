@@ -16,25 +16,30 @@ final class SignatureInfo extends KnownTlvElement {
     this.keyLocator,
   });
 
-  factory SignatureInfo.fromValue(List<int> value) {
+  static Result<SignatureInfo> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
-    final signatureType = tlvElements.elementAtOrNull(0);
+    final SignatureType signatureType;
 
-    if (signatureType is! SignatureType) {
-      throw const FormatException("Invalid SignatureType");
+    switch (tlvElements.elementAtOrNull(0)) {
+      case Success<SignatureType>(:final tlvElement):
+        signatureType = tlvElement;
+      case Fail(:final exception):
+        return Fail(exception);
+      default:
+        return Fail(const FormatException("Missing SignatureType"));
     }
 
     final secondElement = tlvElements.elementAtOrNull(1);
     final KeyLocator? keyLocator;
 
-    if (secondElement is KeyLocator) {
-      keyLocator = secondElement;
+    if (secondElement is Success<KeyLocator>) {
+      keyLocator = secondElement.tlvElement;
     } else {
       keyLocator = null;
     }
 
-    return SignatureInfo(signatureType, keyLocator: keyLocator);
+    return Success(SignatureInfo(signatureType, keyLocator: keyLocator));
   }
 
   final SignatureType signatureType;

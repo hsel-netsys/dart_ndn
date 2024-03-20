@@ -9,10 +9,15 @@ part of "../name_component.dart";
 final class GenericNameComponent extends NameComponent {
   const GenericNameComponent(this.content);
 
-  factory GenericNameComponent.fromValue(List<int> value) {
-    // TODO: Will probably not be UTF-8
-    final content = utf8.decode(value);
-    return GenericNameComponent(content);
+  static Result<GenericNameComponent> fromValue(List<int> value) {
+    try {
+      // TODO: Will probably not be UTF-8
+      final content = utf8.decode(value);
+      final component = GenericNameComponent(content);
+      return Success(component);
+    } on Exception catch (exception) {
+      return Fail(exception);
+    }
   }
 
   final String content;

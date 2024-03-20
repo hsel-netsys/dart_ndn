@@ -12,6 +12,7 @@ import "../tlv_elements/name/name_component.dart";
 import "../tlv_elements/nfd_management/control_parameters.dart";
 import "../tlv_elements/nfd_management/control_response.dart";
 import "../tlv_elements/packet/interest_packet.dart";
+import "../tlv_elements/tlv_element.dart";
 
 class NfdController {
   NfdController(this._face);
@@ -30,7 +31,7 @@ class NfdController {
       case DataReceived(:final data):
         final response = data.content?.toTvlElements().firstOrNull;
 
-        if (response is ControlResponse) {
+        if (response is Success<ControlResponse>) {
           // TODO: Process response
           // ignore: avoid_print
           print(response);

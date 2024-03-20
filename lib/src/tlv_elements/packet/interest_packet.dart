@@ -4,12 +4,11 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "dart:convert";
-
 import "../../extensions/bytes_encoding.dart";
 import "../name/name.dart";
 import "../name/name_component.dart";
 import "../nonce.dart";
+import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "data_packet.dart";
 import "ndn_packet.dart";
@@ -36,21 +35,30 @@ final class InterestPacket extends NdnPacket {
     this.hopLimit,
   }) : nonce = generateNonce ? Nonce() : null;
 
-// TODO: Add error handling
-  factory InterestPacket.fromValue(List<int> value) {
+  // TODO: Improve error handling
+  static Result<InterestPacket> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
     final nameComponents = <NameComponent>[];
 
     for (final tlvElement in tlvElements) {
-      switch (tlvElement.type) {
-        case 8:
-          nameComponents
-              .add(GenericNameComponent(utf8.decode(tlvElement.encodedValue)));
+      switch (tlvElement) {
+        case Success<NameComponent>(:final tlvElement):
+          nameComponents.add(tlvElement);
+        case Fail(:final exception):
+          // TODO: Deal with critical fails
+          return Fail(exception);
+
+        default:
+          continue;
       }
     }
 
-    return InterestPacket.fromName(Name(nameComponents));
+    // TODO: Also deal with other TlvElements
+
+    final result = InterestPacket.fromName(Name(nameComponents));
+
+    return Success(result);
   }
 
   final Name name;
@@ -93,11 +101,11 @@ final class InterestPacket extends NdnPacket {
     final encodedValues = name.encode().toList();
 
     if (canBePrefix) {
-      encodedValues.addAll(CanBePrefix().encode());
+      encodedValues.addAll(const CanBePrefix().encode());
     }
 
     if (mustBeFresh) {
-      encodedValues.addAll(MustBeFresh().encode());
+      encodedValues.addAll(const MustBeFresh().encode());
     }
 
     final forwardingHint = this.forwardingHint;

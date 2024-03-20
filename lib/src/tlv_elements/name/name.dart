@@ -23,18 +23,15 @@ import "name_component.dart";
 final class Name extends KnownTlvElement implements Comparable<Name> {
   const Name(this.nameComponents);
 
-  factory Name.fromValue(List<int> value) {
+  Name.fromString(String name) : nameComponents = name.toNameComponents();
+
+  static Result<Name> fromValue(List<int> value) {
+    // TODO: Deal with invalid nameComponents
     final nameComponents =
         value.toTvlElements().whereType<NameComponent>().toList();
 
-    return Name(nameComponents);
+    return Success(Name(nameComponents));
   }
-
-  Name.fromString(String name) : nameComponents = name.toNameComponents();
-
-  // Name.fromValue(List<int> value) : nameComponents = [] {
-  //   throw UnimplementedError();
-  // }
 
   @override
   TlvType get tlvType => TlvType.name;

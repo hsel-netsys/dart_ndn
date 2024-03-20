@@ -13,20 +13,24 @@ import "../tlv_element.dart";
 abstract base class NdnPacket extends KnownTlvElement {
   const NdnPacket();
 
-  static NdnPacket? tryParse(List<int> encodedPacket) {
+  static Result<NdnPacket> tryParse(List<int> encodedPacket) {
     final tlvElements = encodedPacket.toTvlElements();
 
-    if (tlvElements.isEmpty) {
-      return null;
+    switch (tlvElements.firstOrNull) {
+      case Success(:final tlvElement):
+        if (tlvElement is NdnPacket) {
+          return Success(tlvElement);
+        } else {
+          return Fail(
+            FormatException(
+              "Encountered an unexcepted TlvElement ${tlvElement.runtimeType}",
+            ),
+          );
+        }
+      case Fail(:final exception):
+        return Fail(exception);
+      case null:
+        return Fail(const FormatException("Encountered no TlvElement."));
     }
-
-    final tlvElement = tlvElements.first;
-
-    // FIXME: This needs be handled differently
-    if (tlvElement is NdnPacket) {
-      return tlvElement;
-    }
-
-    return null;
   }
 }

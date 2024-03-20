@@ -8,6 +8,7 @@ import "dart:async";
 import "dart:io";
 
 import "tlv_elements/packet/ndn_packet.dart";
+import "tlv_elements/tlv_element.dart";
 
 sealed class Transport extends Stream<NdnPacket> {
   void send(NdnPacket block);
@@ -51,11 +52,13 @@ final class TcpTransport extends Transport {
           case RawSocketEvent.read:
             final data = _socket.read();
 
-            final packet = NdnPacket.tryParse(data ?? []);
-
-            if (packet != null) {
-              streamController.add(packet);
+            switch (NdnPacket.tryParse(data ?? [])) {
+              case Success(:final tlvElement):
+                streamController.add(tlvElement);
+              default:
+              // Ignore invalid packets
             }
+
           default:
             return;
         }
@@ -127,11 +130,12 @@ final class UnixTransport extends Transport {
           case RawSocketEvent.read:
             final data = _socket.read();
 
-            final packet = NdnPacket.tryParse(data ?? []);
-
-            if (packet != null) {
-              streamController.add(packet);
+            switch (NdnPacket.tryParse(data ?? [])) {
+              case Success(:final tlvElement):
+                streamController.add(tlvElement);
+              default:
             }
+
           default:
             return;
         }

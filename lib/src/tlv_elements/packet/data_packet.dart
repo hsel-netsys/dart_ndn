@@ -8,6 +8,7 @@ import "../../extensions/bytes_encoding.dart";
 import "../name/name.dart";
 import "../signature/data_signature.dart";
 import "../signature/signature_type.dart";
+import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "data_packet/content.dart";
 import "ndn_packet.dart";
@@ -18,21 +19,27 @@ final class DataPacket extends NdnPacket {
     this.content,
   });
 
-  factory DataPacket.fromValue(List<int> value) {
+  static Result<DataPacket> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
-    final tlvIterator = tlvElements.iterator;
+    final tlvIterator = tlvElements.iterator..moveNext();
 
-    final missingNameException = Exception("Missing name in data packet");
-
-    if (!tlvIterator.moveNext()) {
-      throw missingNameException;
-    }
-
-    final name = tlvIterator.current;
-
-    if (name is! Name) {
-      throw missingNameException;
+    final Name name;
+    switch (tlvIterator.current) {
+      case Success(:final tlvElement):
+        if (tlvElement is Name) {
+          name = tlvElement;
+        } else {
+          return Fail(
+            FormatException(
+              "Expected Name TlvElement, encountered ${tlvElement.runtimeType}",
+            ),
+          );
+        }
+      case Fail(:final exception):
+        return Fail(exception);
+      default:
+        return Fail(Exception("Missing name in data packet"));
     }
 
     tlvIterator
@@ -40,17 +47,18 @@ final class DataPacket extends NdnPacket {
       ..moveNext()
       ..moveNext();
 
-    final List<int>? contentValue;
+    final List<int>? content;
 
-    final content = tlvIterator.current;
-
-    if (content is Content) {
-      contentValue = content.encodedValue;
-    } else {
-      contentValue = null;
+    switch (tlvIterator.current) {
+      case Success(:final tlvElement):
+        content = tlvElement.encodedValue;
+      // TODO: Handle missing content
+      default:
+        content = null;
     }
 
-    return DataPacket(name, content: contentValue);
+    final result = DataPacket(name, content: content);
+    return Success(result);
   }
 
   final Name name;
