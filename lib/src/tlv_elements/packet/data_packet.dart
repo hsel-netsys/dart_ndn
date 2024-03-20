@@ -5,10 +5,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "../../extensions/bytes_encoding.dart";
+import "../../result/result.dart";
 import "../name/name.dart";
 import "../signature/data_signature.dart";
 import "../signature/signature_type.dart";
-import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "data_packet/content.dart";
 import "ndn_packet.dart";

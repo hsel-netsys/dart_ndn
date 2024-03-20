@@ -7,11 +7,11 @@
 import "../extensions/bytes_encoding.dart";
 import "../face.dart";
 import "../result/interest_expression_result.dart";
+import "../result/result.dart";
 import "../tlv_elements/name/name.dart";
 import "../tlv_elements/nfd_management/control_parameters.dart";
 import "../tlv_elements/nfd_management/control_response.dart";
 import "../tlv_elements/packet/interest_packet.dart";
-import "../tlv_elements/tlv_element.dart";
 
 class NfdController {
   NfdController(this._face);

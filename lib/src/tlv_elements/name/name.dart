@@ -8,6 +8,7 @@ import "package:collection/collection.dart";
 
 import "../../extensions/bytes_encoding.dart";
 import "../../extensions/tlv_element_encoding.dart";
+import "../../result/result.dart";
 import "../packet/interest_packet.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";

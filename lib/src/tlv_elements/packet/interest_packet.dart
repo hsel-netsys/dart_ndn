@@ -7,10 +7,10 @@
 import "package:convert/convert.dart";
 
 import "../../extensions/bytes_encoding.dart";
+import "../../result/result.dart";
 import "../name/name.dart";
 import "../name/name_component.dart";
 import "../nonce.dart";
-import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "data_packet.dart";
 import "ndn_packet.dart";

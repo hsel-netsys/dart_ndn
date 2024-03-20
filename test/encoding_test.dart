@@ -44,8 +44,8 @@ void main() {
         final tlvElements = input.toTvlElements();
         expect(tlvElements.length, 2);
 
-        final firstElement = tlvElements.first;
-        final secondElement = tlvElements.skip(1).first;
+        final firstElement = tlvElements.first.unwrap();
+        final secondElement = tlvElements.skip(1).first.unwrap();
         expect(firstElement, const UnknownTlvElement(254, [5, 6]));
         expect(secondElement, const UnknownTlvElement(254, [5, 6, 7]));
       });

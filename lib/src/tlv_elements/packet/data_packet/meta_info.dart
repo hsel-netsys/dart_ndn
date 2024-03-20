@@ -6,6 +6,7 @@
 
 import "../../../extensions/bytes_encoding.dart";
 import "../../../extensions/non_negative_integer.dart";
+import "../../../result/result.dart";
 import "../../name/name_component.dart";
 import "../../tlv_element.dart";
 import "../../tlv_type.dart";

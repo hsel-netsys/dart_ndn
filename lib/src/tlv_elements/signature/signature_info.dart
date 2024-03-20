@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "../../extensions/bytes_encoding.dart";
+import "../../result/result.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "key_locator.dart";

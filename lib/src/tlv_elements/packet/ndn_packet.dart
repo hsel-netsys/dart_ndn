@@ -7,6 +7,7 @@
 import "package:meta/meta.dart";
 
 import "../../extensions/bytes_encoding.dart";
+import "../../result/result.dart";
 import "../tlv_element.dart";
 
 @immutable

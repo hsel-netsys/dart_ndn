@@ -6,6 +6,7 @@
 
 import "dart:typed_data";
 
+import "../result/result.dart";
 import "../tlv_elements/tlv_element.dart";
 
 extension BytesDecoder on List<int> {

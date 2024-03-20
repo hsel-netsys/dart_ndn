@@ -6,6 +6,7 @@
 
 import "../../extensions/bytes_encoding.dart";
 import "../../extensions/tlv_element_encoding.dart";
+import "../../result/result.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "status.dart";

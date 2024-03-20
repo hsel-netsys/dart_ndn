@@ -8,7 +8,7 @@ import "dart:typed_data";
 
 import "package:meta/meta.dart";
 
-import "../tlv_elements/tlv_element.dart";
+import "../result/result.dart";
 
 extension type NonNegativeInteger(int value) implements int {
   /// Const constructor.

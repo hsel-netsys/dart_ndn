@@ -8,6 +8,7 @@ import "package:meta/meta.dart";
 
 import "../extensions/int_encoding.dart";
 import "../extensions/non_negative_integer.dart";
+import "../result/result.dart";
 import "name/name.dart";
 import "name/name_component.dart";
 import "nfd_management/control_parameters.dart";
@@ -26,20 +27,6 @@ import "signature/signature_time.dart";
 import "signature/signature_type.dart";
 import "signature/signature_value.dart";
 import "tlv_type.dart";
-
-sealed class Result<T> {}
-
-final class Success<T> extends Result<T> {
-  Success(this.tlvElement);
-
-  final T tlvElement;
-}
-
-final class Fail<T> extends Result<T> {
-  Fail(this.exception);
-
-  final Exception exception;
-}
 
 @immutable
 abstract base class TlvElement {

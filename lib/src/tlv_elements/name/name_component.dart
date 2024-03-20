@@ -9,6 +9,7 @@ import "package:convert/convert.dart";
 import "package:meta/meta.dart";
 
 import "../../extensions/non_negative_integer.dart";
+import "../../result/result.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 

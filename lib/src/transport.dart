@@ -7,8 +7,8 @@
 import "dart:async";
 import "dart:io";
 
+import "result/result.dart";
 import "tlv_elements/packet/ndn_packet.dart";
-import "tlv_elements/tlv_element.dart";
 
 sealed class Transport extends Stream<NdnPacket> {
   void send(NdnPacket block);
