@@ -154,6 +154,4 @@ extension NameComponentExtension on String {
   }
 }
 
-class SignatureInfo {}
-
 extension type RecordId(int id) {}

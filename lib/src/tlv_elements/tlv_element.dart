@@ -17,12 +17,19 @@ import "nfd_management/status.dart";
 import "nonce.dart";
 import "packet/data_packet.dart";
 import "packet/data_packet/content.dart";
+import "packet/data_packet/content_type.dart";
+import "packet/data_packet/freshness_period.dart";
 import "packet/data_packet/meta_info.dart";
 import "packet/interest_packet.dart";
+import "packet/interest_packet/application_parameters.dart";
 import "packet/lp_packet.dart";
 import "packet/nack_packet.dart";
 import "signature/interest_signature_info.dart";
+import "signature/interest_signature_value.dart";
 import "signature/key_locator.dart";
+import "signature/signature_info.dart";
+import "signature/signature_nonce.dart";
+import "signature/signature_seq_num.dart";
 import "signature/signature_time.dart";
 import "signature/signature_type.dart";
 import "signature/signature_value.dart";
@@ -141,26 +148,26 @@ abstract base class TlvElement {
         return ForwardingHint.fromValue(value);
       case TlvType.interestLifetime:
         return InterestLifetime.fromValue(value);
-      // case TlvType.applicationParameters:
-      //   return ApplicationParameters.fromValue(value);
+      case TlvType.applicationParameters:
+        return ApplicationParameters.fromValue(value);
       case TlvType.interestSignatureInfo:
         return InterestSignatureInfo.fromValue(value);
-      // case TlvType.interestSignatureValue:
-      //   return InterestSignatureValue.fromValue(value);
+      case TlvType.interestSignatureValue:
+        return InterestSignatureValue.fromValue(value);
       case TlvType.metaInfo:
         return MetaInfo.fromValue(value);
-      // case TlvType.signatureInfo:
-      //   return SignatureInfo.fromValue(value);
-      // case TlvType.contentType:
-      //   return ContentType.fromValue(value);
-      // case TlvType.freshnessPeriod:
-      //   return FreshnessPeriod.fromValue(value);
+      case TlvType.signatureInfo:
+        return SignatureInfo.fromValue(value);
+      case TlvType.contentType:
+        return ContentType.fromValue(value);
+      case TlvType.freshnessPeriod:
+        return FreshnessPeriod.fromValue(value);
       // case TlvType.finalBlockId:
       //   return FinalBlockId.fromValue(value);
-      // case TlvType.signatureNonce:
-      //   return SignatureNonce.fromValue();
-      // case TlvType.signatureSeqNum:
-      //   return SignatureSeqNum.fromValue(value);
+      case TlvType.signatureNonce:
+        return SignatureNonce.fromValue(value);
+      case TlvType.signatureSeqNum:
+        return SignatureSeqNum.fromValue(value);
       // case TlvType.validityPeriod:
       //   return ValidatyPeriod.fromValue(value);
       // case TlvType.notBefore:

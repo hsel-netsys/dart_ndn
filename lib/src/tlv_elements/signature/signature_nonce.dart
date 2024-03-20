@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "../../result/result.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 
@@ -14,6 +15,9 @@ import "../tlv_type.dart";
 // TODO: Introduce common base class for simple value elements like this one
 final class SignatureNonce extends OctetTlvElement {
   const SignatureNonce(super.value);
+
+  static Result<SignatureNonce> fromValue(List<int> value) =>
+      Success(SignatureNonce(value));
 
   @override
   TlvType get tlvType => TlvType.signatureNonce;

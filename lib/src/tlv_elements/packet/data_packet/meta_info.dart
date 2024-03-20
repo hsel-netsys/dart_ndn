@@ -10,6 +10,8 @@ import "../../../result/result.dart";
 import "../../name/name_component.dart";
 import "../../tlv_element.dart";
 import "../../tlv_type.dart";
+import "content_type.dart";
+import "freshness_period.dart";
 
 final class MetaInfo extends KnownTlvElement {
   const MetaInfo({
@@ -18,11 +20,8 @@ final class MetaInfo extends KnownTlvElement {
     this.finalBlockId,
   });
 
-  final NonNegativeInteger? contentType;
-
-  final Duration? freshnessPeriod;
-
-  final NameComponent? finalBlockId;
+  @override
+  TlvType get tlvType => TlvType.metaInfo;
 
   static Result<MetaInfo> fromValue(List<int> value) {
     // TODO: Process tlvElements
@@ -31,20 +30,24 @@ final class MetaInfo extends KnownTlvElement {
     return Success(const MetaInfo());
   }
 
+  final NonNegativeInteger? contentType;
+
+  final Duration? freshnessPeriod;
+
+  final NameComponent? finalBlockId;
+
   @override
   List<int> get encodedValue {
     final List<int> result = [];
 
     final contentType = this.contentType;
     if (contentType != null) {
-      result.addAll(contentType.encode());
+      result.addAll(ContentType(contentType).encode());
     }
 
     final freshnessPeriod = this.freshnessPeriod;
-
     if (freshnessPeriod != null) {
-      result
-          .addAll(NonNegativeInteger(freshnessPeriod.inMilliseconds).encode());
+      result.addAll(FreshnessPeriod(freshnessPeriod).encode());
     }
 
     final finalBlockId = this.finalBlockId;
@@ -55,7 +58,4 @@ final class MetaInfo extends KnownTlvElement {
 
     return result;
   }
-
-  @override
-  TlvType get tlvType => TlvType.metaInfo;
 }
