@@ -4,6 +4,7 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "../extensions/non_negative_integer.dart";
 import "../tlv_elements/name/name.dart";
 import "../tlv_elements/nfd_management/control_parameters.dart";
 import "../tlv_elements/packet/interest_packet.dart";
@@ -14,6 +15,11 @@ abstract class CommandInterest {
     this.commandVerb, {
     this.commandPrefix = "/localhost/nfd",
     this.name,
+    this.faceId,
+    this.origin,
+    this.cost,
+    this.flags,
+    this.expirationPeriod,
   });
 
   final String commandVerb;
@@ -24,9 +30,24 @@ abstract class CommandInterest {
 
   final Name? name;
 
+  final NonNegativeInteger? faceId;
+
+  final NonNegativeInteger? origin;
+
+  final NonNegativeInteger? cost;
+
+  final NonNegativeInteger? flags;
+
+  final NonNegativeInteger? expirationPeriod;
+
   InterestPacket toInterestPacket() {
     final controlParameters = ControlParameters(
       name: name,
+      faceId: faceId,
+      origin: origin,
+      cost: cost,
+      flags: flags,
+      expirationPeriod: expirationPeriod,
     ).asNameComponent();
 
     final nameComponents = [
@@ -44,8 +65,13 @@ abstract class CommandInterest {
 
 final class RegisterRouteCommand extends CommandInterest {
   RegisterRouteCommand(
-    Name prefix,
-  ) : super(
+    Name prefix, {
+    super.faceId,
+    super.origin,
+    super.cost,
+    super.flags,
+    super.expirationPeriod,
+  }) : super(
           "rib",
           "register",
           name: prefix,

@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "../extensions/bytes_encoding.dart";
+import "../extensions/non_negative_integer.dart";
 import "../face.dart";
 import "../result/interest_expression_result.dart";
 import "../result/result.dart";
@@ -17,8 +18,22 @@ class NfdController {
 
   final Face _face;
 
-  Future<void> registerRoute(Name prefix) async {
-    final interest = RegisterRouteCommand(prefix).toInterestPacket();
+  Future<void> registerRoute(
+    Name prefix, {
+    NonNegativeInteger? faceId,
+    NonNegativeInteger? origin,
+    NonNegativeInteger? cost,
+    NonNegativeInteger? flags,
+    NonNegativeInteger? expirationPeriod,
+  }) async {
+    final interest = RegisterRouteCommand(
+      prefix,
+      faceId: faceId,
+      origin: origin,
+      cost: cost,
+      flags: flags,
+      expirationPeriod: expirationPeriod,
+    ).toInterestPacket();
     final interestExpressionResult = await _face.expressInterest(interest);
 
     switch (interestExpressionResult) {

@@ -11,10 +11,11 @@ import "../name/name.dart";
 import "../name/name_component.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
-import "tlv_elements/expiration_period.dart";
-import "tlv_elements/face_id.dart";
-import "tlv_elements/flags.dart";
-import "tlv_elements/origin.dart";
+import "cost.dart";
+import "expiration_period.dart";
+import "face_id.dart";
+import "flags.dart";
+import "origin.dart";
 
 final class ControlParameters extends KnownTlvElement {
   const ControlParameters({
@@ -96,7 +97,7 @@ final class ControlParameters extends KnownTlvElement {
 
     final cost = this.cost;
     if (cost != null) {
-      encodedValue.addAll(Origin(cost).encode());
+      encodedValue.addAll(Cost(cost).encode());
     }
 
     final flags = this.flags;

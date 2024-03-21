@@ -4,12 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../../tlv_element.dart";
-import "../../tlv_type.dart";
+import "../tlv_element.dart";
+import "../tlv_type.dart";
 
-final class Cost extends NonNegativeIntegerTlvElement {
-  const Cost(super.value);
+final class FaceId extends NonNegativeIntegerTlvElement {
+  const FaceId(super.value);
 
   @override
-  TlvType get tlvType => TlvType.cost;
+  TlvType get tlvType => TlvType.faceId;
 }

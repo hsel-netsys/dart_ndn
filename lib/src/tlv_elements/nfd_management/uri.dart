@@ -6,8 +6,8 @@
 
 import "dart:convert";
 
-import "../../tlv_element.dart";
-import "../../tlv_type.dart";
+import "../tlv_element.dart";
+import "../tlv_type.dart";
 
 final class UriElement extends KnownTlvElement {
   const UriElement(this.uri);

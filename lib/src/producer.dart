@@ -6,6 +6,7 @@
 
 import "dart:async";
 
+import "extensions/non_negative_integer.dart";
 import "face.dart";
 import "nfd_management/nfd_controller.dart";
 import "tlv_elements/name/name.dart";
@@ -43,8 +44,22 @@ class Producer extends Stream<InterestPacket> {
     return consumer;
   }
 
-  Future<void> registerPrefix(Name prefix) async {
-    await _nfdController.registerRoute(prefix);
+  Future<void> registerPrefix(
+    Name prefix, {
+    NonNegativeInteger? faceId,
+    NonNegativeInteger? origin,
+    NonNegativeInteger? cost,
+    NonNegativeInteger? flags,
+    NonNegativeInteger? expirationPeriod,
+  }) async {
+    await _nfdController.registerRoute(
+      prefix,
+      faceId: faceId,
+      origin: origin,
+      cost: cost,
+      flags: flags,
+      expirationPeriod: expirationPeriod,
+    );
   }
 
   Future<void> satifisfyInterest(

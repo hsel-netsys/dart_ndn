@@ -4,12 +4,12 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "../../tlv_element.dart";
-import "../../tlv_type.dart";
+import "../tlv_element.dart";
+import "../tlv_type.dart";
 
-final class ExpirationPeriod extends NonNegativeIntegerTlvElement {
-  const ExpirationPeriod(super.value);
+final class Origin extends NonNegativeIntegerTlvElement {
+  const Origin(super.value);
 
   @override
-  TlvType get tlvType => TlvType.expirationPeriod;
+  TlvType get tlvType => TlvType.origin;
 }
