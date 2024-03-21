@@ -9,9 +9,8 @@ import "../face.dart";
 import "../result/interest_expression_result.dart";
 import "../result/result.dart";
 import "../tlv_elements/name/name.dart";
-import "../tlv_elements/nfd_management/control_parameters.dart";
 import "../tlv_elements/nfd_management/control_response.dart";
-import "../tlv_elements/packet/interest_packet.dart";
+import "command_interest.dart";
 
 class NfdController {
   NfdController(this._face);
@@ -19,13 +18,7 @@ class NfdController {
   final Face _face;
 
   Future<void> registerRoute(Name prefix) async {
-    final nameComponents = [
-      ..."/localhost/nfd/rib/register".toNameComponents(),
-      ControlParameters(name: prefix).asNameComponent(),
-    ];
-    final name = Name(nameComponents);
-
-    final interest = InterestPacket.fromName(name);
+    final interest = RegisterRouteCommand(prefix).toInterestPacket();
     final interestExpressionResult = await _face.expressInterest(interest);
 
     switch (interestExpressionResult) {
@@ -35,7 +28,7 @@ class NfdController {
         if (response is Success<ControlResponse>) {
           // TODO: Process response
           // ignore: avoid_print
-          print(response);
+          print(response.tlvElement);
         }
 
       default:
