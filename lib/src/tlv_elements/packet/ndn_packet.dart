@@ -31,7 +31,7 @@ abstract base class NdnPacket extends KnownTlvElement {
       case Fail(:final exception):
         return Fail(exception);
       case null:
-        return Fail(const FormatException("Encountered no TlvElement."));
+        return const Fail(FormatException("Encountered no TlvElement."));
     }
   }
 }

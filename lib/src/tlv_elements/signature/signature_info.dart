@@ -28,7 +28,7 @@ final class SignatureInfo extends KnownTlvElement {
       case Fail(:final exception):
         return Fail(exception);
       default:
-        return Fail(const FormatException("Missing SignatureType"));
+        return const Fail(FormatException("Missing SignatureType"));
     }
 
     final secondElement = tlvElements.elementAtOrNull(1);

@@ -66,7 +66,7 @@ final class InterestSignatureInfo extends KnownTlvElement {
       case Fail(:final exception):
         return Fail(exception);
       default:
-        return Fail(const FormatException("Missing SignatureType TlvElement"));
+        return const Fail(FormatException("Missing SignatureType TlvElement"));
     }
   }
 }

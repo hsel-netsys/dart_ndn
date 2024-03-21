@@ -4,12 +4,17 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
+import "package:meta/meta.dart";
+
+@immutable
 sealed class Result<T> {
+  const Result();
+
   T unwrap();
 }
 
 final class Success<T> extends Result<T> {
-  Success(this.tlvElement);
+  const Success(this.tlvElement);
 
   final T tlvElement;
 
@@ -18,7 +23,7 @@ final class Success<T> extends Result<T> {
 }
 
 final class Fail<T> extends Result<T> {
-  Fail(this.exception);
+  const Fail(this.exception);
 
   final Exception exception;
 

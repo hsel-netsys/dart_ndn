@@ -31,7 +31,7 @@ abstract base class KeyLocator extends KnownTlvElement {
 
       default:
     }
-    return Fail(const FormatException("Invalid value for KeyLocator."));
+    return const Fail(FormatException("Invalid value for KeyLocator."));
   }
 
   @override

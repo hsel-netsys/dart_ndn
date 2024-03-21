@@ -6,11 +6,13 @@
 
 import "../../../extensions/bytes_encoding.dart";
 import "../../../extensions/non_negative_integer.dart";
+import "../../../result/option.dart";
 import "../../../result/result.dart";
 import "../../name/name_component.dart";
 import "../../tlv_element.dart";
 import "../../tlv_type.dart";
 import "content_type.dart";
+import "final_block_id.dart";
 import "freshness_period.dart";
 
 final class MetaInfo extends KnownTlvElement {
@@ -24,10 +26,59 @@ final class MetaInfo extends KnownTlvElement {
   TlvType get tlvType => TlvType.metaInfo;
 
   static Result<MetaInfo> fromValue(List<int> value) {
-    // TODO: Process tlvElements
-    final _ = value.toTvlElements().iterator..moveNext();
+    final tlvElements = value.toTvlElements();
 
-    return Success(const MetaInfo());
+    Option<ContentType>? maybeContentType;
+    Option<FreshnessPeriod>? maybeFreshnessPeriod;
+    Option<FinalBlockId>? maybeFinalBlockId;
+
+    for (final tlvElement in tlvElements) {
+      switch (tlvElement) {
+        case Success<ContentType>(:final tlvElement):
+          if (maybeContentType == null) {
+            maybeContentType = Some(tlvElement);
+            continue;
+          }
+          return const Fail(
+            FormatException("Encountered out-of-order ContentType"),
+          );
+        case Success<FreshnessPeriod>(:final tlvElement):
+          maybeContentType ??= const None();
+          if (maybeFreshnessPeriod == null) {
+            maybeFreshnessPeriod = Some(tlvElement);
+            continue;
+          }
+          return const Fail(
+            FormatException("Encountered out-of-order FreshnessPeriod"),
+          );
+        case Success<FinalBlockId>(:final tlvElement):
+          maybeContentType ??= const None();
+          maybeFreshnessPeriod ??= const None();
+          if (maybeFinalBlockId == null) {
+            maybeFinalBlockId = Some(tlvElement);
+            continue;
+          }
+          return const Fail(
+            FormatException("Encountered out-of-order FinalBlockId"),
+          );
+        case Success(:final tlvElement):
+          if (tlvElement.isCritical) {
+            return const Fail(
+              FormatException("Encountered unrecognized TlvElement"),
+            );
+          }
+        case Fail(:final exception):
+          return Fail(exception);
+      }
+    }
+
+    return Success(
+      MetaInfo(
+        contentType: maybeContentType?.unwrapOrNull()?.value,
+        freshnessPeriod: maybeFreshnessPeriod?.unwrapOrNull()?.duration,
+        finalBlockId: maybeFinalBlockId?.unwrapOrNull()?.nameComponent,
+      ),
+    );
   }
 
   final NonNegativeInteger? contentType;

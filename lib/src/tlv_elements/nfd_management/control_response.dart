@@ -31,8 +31,8 @@ final class ControlResponse extends KnownTlvElement {
         return Fail(exception);
 
       default:
-        return Fail(
-          const FormatException("Invalid format for ControlResponse"),
+        return const Fail(
+          FormatException("Invalid format for ControlResponse"),
         );
     }
 
@@ -45,8 +45,8 @@ final class ControlResponse extends KnownTlvElement {
         return Fail(exception);
 
       default:
-        return Fail(
-          const FormatException("Invalid format for ControlResponse"),
+        return const Fail(
+          FormatException("Invalid format for ControlResponse"),
         );
     }
 

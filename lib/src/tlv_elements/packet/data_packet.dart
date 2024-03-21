@@ -11,14 +11,17 @@ import "../signature/data_signature.dart";
 import "../signature/signature_type.dart";
 import "../tlv_type.dart";
 import "data_packet/content.dart";
+import "data_packet/meta_info.dart";
 import "ndn_packet.dart";
 
 final class DataPacket extends NdnPacket {
   const DataPacket(
     this.name, {
     this.content,
+    this.metaInfo,
   });
 
+  // TODO: Make decoding more robust.
   static Result<DataPacket> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
@@ -42,10 +45,19 @@ final class DataPacket extends NdnPacket {
         return Fail(Exception("Missing name in data packet"));
     }
 
-    tlvIterator
-      // Skip MetaInfo for now
-      ..moveNext()
-      ..moveNext();
+    tlvIterator.moveNext();
+
+    final MetaInfo? metaInfo;
+
+    switch (tlvIterator.current) {
+      case Success<MetaInfo>(:final tlvElement):
+        metaInfo = tlvElement;
+      // TODO: Handle missing content
+      default:
+        metaInfo = null;
+    }
+
+    tlvIterator.moveNext();
 
     final List<int>? content;
 
@@ -57,11 +69,17 @@ final class DataPacket extends NdnPacket {
         content = null;
     }
 
-    final result = DataPacket(name, content: content);
+    final result = DataPacket(
+      name,
+      metaInfo: metaInfo,
+      content: content,
+    );
     return Success(result);
   }
 
   final Name name;
+
+  final MetaInfo? metaInfo;
 
   final List<int>? content;
 

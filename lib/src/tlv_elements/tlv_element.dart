@@ -18,6 +18,7 @@ import "nonce.dart";
 import "packet/data_packet.dart";
 import "packet/data_packet/content.dart";
 import "packet/data_packet/content_type.dart";
+import "packet/data_packet/final_block_id.dart";
 import "packet/data_packet/freshness_period.dart";
 import "packet/data_packet/meta_info.dart";
 import "packet/interest_packet.dart";
@@ -162,8 +163,8 @@ abstract base class TlvElement {
         return ContentType.fromValue(value);
       case TlvType.freshnessPeriod:
         return FreshnessPeriod.fromValue(value);
-      // case TlvType.finalBlockId:
-      //   return FinalBlockId.fromValue(value);
+      case TlvType.finalBlockId:
+        return FinalBlockId.fromValue(value);
       case TlvType.signatureNonce:
         return SignatureNonce.fromValue(value);
       case TlvType.signatureSeqNum:

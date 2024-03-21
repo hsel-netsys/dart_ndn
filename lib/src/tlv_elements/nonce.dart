@@ -27,7 +27,7 @@ final class Nonce extends KnownTlvElement {
     final isValid = _checkNonceValue(value);
 
     if (!isValid) {
-      return Fail(const FormatException("Encountered invalid Nonce format"));
+      return const Fail(FormatException("Encountered invalid Nonce format"));
     }
 
     return Success(Nonce(value));
@@ -63,7 +63,7 @@ final class CanBePrefix extends FlagTlvElement {
       );
     }
 
-    return Success(const MustBeFresh());
+    return const Success(MustBeFresh());
   }
 
   @override
@@ -82,7 +82,7 @@ final class MustBeFresh extends FlagTlvElement {
       );
     }
 
-    return Success(const MustBeFresh());
+    return const Success(MustBeFresh());
   }
 
   @override
@@ -112,8 +112,8 @@ final class ForwardingHint extends KnownTlvElement {
         case Fail(:final exception):
           return Fail(exception);
         default:
-          return Fail(
-            const FormatException("Encountered a non-name TlvElement"),
+          return const Fail(
+            FormatException("Encountered a non-name TlvElement"),
           );
       }
     }

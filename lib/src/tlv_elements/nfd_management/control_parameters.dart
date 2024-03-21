@@ -20,7 +20,7 @@ final class ControlParameters extends KnownTlvElement {
     // TODO: Implement
     final _ = value.toTvlElements();
 
-    return Success(const ControlParameters());
+    return const Success(ControlParameters());
   }
 
   final Name? name;

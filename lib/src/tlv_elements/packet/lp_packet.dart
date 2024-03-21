@@ -23,7 +23,7 @@ base class LpPacket extends NdnPacket {
       case Fail(:final exception):
         return Fail(exception);
       default:
-        return Success(const LpPacket());
+        return const Success(LpPacket());
     }
   }
 

@@ -29,14 +29,14 @@ abstract base class KeyLocator extends KnownTlvElement {
           case KeyDigest():
             keyLocator = KeyDigestKeyLocator(tlvElement);
           default:
-            return Fail(const FormatException("Invalid value for KeyLocator."));
+            return const Fail(FormatException("Invalid value for KeyLocator."));
         }
 
         return Success(keyLocator);
 
       default:
         // TODO: Check for length etc.
-        return Fail(const FormatException("Missing value for KeyLocator"));
+        return const Fail(FormatException("Missing value for KeyLocator"));
     }
   }
 
