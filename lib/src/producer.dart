@@ -9,6 +9,7 @@ import "dart:async";
 import "extensions/non_negative_integer.dart";
 import "face.dart";
 import "nfd_management/nfd_controller.dart";
+import "signer.dart";
 import "tlv_elements/name/name.dart";
 import "tlv_elements/packet/data_packet.dart";
 import "tlv_elements/packet/interest_packet.dart";
@@ -16,8 +17,13 @@ import "tlv_elements/packet/ndn_packet.dart";
 import "transport.dart";
 
 class Producer extends Stream<InterestPacket> {
-  Producer(this._face)
-      : _nfdController = NfdController(_face),
+  Producer(
+    this._face, {
+    Signer? signer,
+  })  : _nfdController = NfdController(
+          _face,
+          signer: signer,
+        ),
         _interestPacketStream =
             _filterInterestPackets(_face.asBroadcastStream());
 

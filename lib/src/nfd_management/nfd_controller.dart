@@ -9,14 +9,20 @@ import "../extensions/non_negative_integer.dart";
 import "../face.dart";
 import "../result/interest_expression_result.dart";
 import "../result/result.dart";
+import "../signer.dart";
 import "../tlv_elements/name/name.dart";
 import "../tlv_elements/nfd_management/control_response.dart";
 import "command_interest.dart";
 
 class NfdController {
-  NfdController(this._face);
+  NfdController(
+    this._face, {
+    Signer? signer,
+  }) : _signer = signer;
 
   final Face _face;
+
+  final Signer? _signer;
 
   Future<void> registerRoute(
     Name prefix, {
@@ -26,7 +32,7 @@ class NfdController {
     NonNegativeInteger? flags,
     NonNegativeInteger? expirationPeriod,
   }) async {
-    final interest = RegisterRouteCommand(
+    var interestPacket = RegisterRouteCommand(
       prefix,
       faceId: faceId,
       origin: origin,
@@ -34,7 +40,13 @@ class NfdController {
       flags: flags,
       expirationPeriod: expirationPeriod,
     ).toInterestPacket();
-    final interestExpressionResult = await _face.expressInterest(interest);
+
+    if (_signer != null) {
+      interestPacket = _signer.signInterest(interestPacket);
+    }
+
+    final interestExpressionResult =
+        await _face.expressInterest(interestPacket);
 
     switch (interestExpressionResult) {
       case DataReceived(:final data):
