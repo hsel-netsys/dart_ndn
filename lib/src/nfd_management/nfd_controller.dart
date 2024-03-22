@@ -12,6 +12,7 @@ import "../result/result.dart";
 import "../signer.dart";
 import "../tlv_elements/name/name.dart";
 import "../tlv_elements/nfd_management/control_response.dart";
+import "../tlv_elements/tlv_element.dart";
 import "command_interest.dart";
 
 class NfdController {
@@ -52,7 +53,7 @@ class NfdController {
       case DataReceived(:final data):
         final response = data.content?.toTvlElements().firstOrNull;
 
-        if (response is Success<ControlResponse>) {
+        if (response is Success<ControlResponse, DecodingException>) {
           // TODO: Process response
           // ignore: avoid_print
           print(response.tlvElement);

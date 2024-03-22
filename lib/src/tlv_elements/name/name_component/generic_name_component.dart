@@ -9,7 +9,9 @@ part of "../name_component.dart";
 final class GenericNameComponent extends NameComponent {
   const GenericNameComponent(this.encodedValue);
 
-  static Result<GenericNameComponent> fromValue(List<int> value) =>
+  static Result<GenericNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) =>
       Success(GenericNameComponent(value));
 
   // TODO: Deal with special characters: https://docs.named-data.net/NDN-packet-spec/current/name.html#ndn-uri-scheme

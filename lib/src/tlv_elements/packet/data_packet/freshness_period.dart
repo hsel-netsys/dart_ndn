@@ -13,13 +13,15 @@ final class FreshnessPeriod extends NonNegativeIntegerTlvElement {
   FreshnessPeriod(this.duration)
       : super(NonNegativeInteger(duration.inMilliseconds));
 
-  static Result<FreshnessPeriod> fromValue(List<int> value) {
+  static Result<FreshnessPeriod, DecodingException> fromValue(List<int> value) {
     switch (NonNegativeInteger.fromValue(value)) {
       // ignore: pattern_never_matches_value_type
       case Success(:final tlvElement):
         return Success(FreshnessPeriod(Duration(milliseconds: tlvElement)));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(TlvType.freshnessPeriod.number, exception.message),
+        );
     }
   }
 

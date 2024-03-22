@@ -11,6 +11,7 @@ import "../../result/result.dart";
 import "../name/name.dart";
 import "../name/name_component.dart";
 import "../nonce.dart";
+import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "data_packet.dart";
 import "ndn_packet.dart";
@@ -38,14 +39,14 @@ final class InterestPacket extends NdnPacket {
   }) : nonce = generateNonce ? Nonce() : null;
 
   // TODO: Improve error handling
-  static Result<InterestPacket> fromValue(List<int> value) {
+  static Result<InterestPacket, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
     final nameComponents = <NameComponent>[];
 
     for (final tlvElement in tlvElements) {
       switch (tlvElement) {
-        case Success<NameComponent>(:final tlvElement):
+        case Success<NameComponent, DecodingException>(:final tlvElement):
           nameComponents.add(tlvElement);
         case Fail(:final exception):
           // TODO: Deal with critical fails

@@ -10,8 +10,8 @@ import "../result/result.dart";
 import "../tlv_elements/tlv_element.dart";
 
 extension BytesDecoder on List<int> {
-  Iterable<Result<TlvElement>> toTvlElements() {
-    final result = <Result<TlvElement>>[];
+  Iterable<Result<TlvElement, DecodingException>> toTvlElements() {
+    final result = <Result<TlvElement, DecodingException>>[];
     int? type;
     int? typeLength;
     final typeBytes = <int>[];

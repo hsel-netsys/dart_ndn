@@ -36,13 +36,28 @@ import "signature/signature_type.dart";
 import "signature/signature_value.dart";
 import "tlv_type.dart";
 
+extension CriticalTypeExtension on int {
+  bool get isCritical => this <= 31 || this & 1 == 1;
+}
+
+@immutable
+final class DecodingException implements Exception {
+  const DecodingException(this.type, [this.message]);
+
+  final int type;
+
+  final String? message;
+
+  bool get isCriticalError => type.isCritical;
+}
+
 @immutable
 abstract base class TlvElement {
   const TlvElement();
 
   int get type;
 
-  bool get isCritical => type <= 31 || type & 1 == 1;
+  bool get isCritical => type.isCritical;
 
   int get length => encodedValue.length;
 
@@ -78,7 +93,10 @@ abstract base class TlvElement {
     return true;
   }
 
-  static Result<TlvElement> parse(int type, List<int> value) {
+  static Result<TlvElement, DecodingException> parse(
+    int type,
+    List<int> value,
+  ) {
     final parsedTlvType = TlvType.tryParse(type);
 
     if (parsedTlvType == null) {

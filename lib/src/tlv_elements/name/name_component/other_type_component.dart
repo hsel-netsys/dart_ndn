@@ -9,7 +9,9 @@ part of "../name_component.dart";
 final class KeywordNameComponent extends NameComponent {
   const KeywordNameComponent(this.encodedValue);
 
-  static Result<KeywordNameComponent> fromValue(List<int> value) {
+  static Result<KeywordNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
     // TODO: Are there any requirements for this type?
     return Success(KeywordNameComponent(value));
   }
@@ -33,13 +35,20 @@ sealed class NonNegativeIntegerNameComponent extends NameComponent {
 final class SegmentNameComponent extends NonNegativeIntegerNameComponent {
   const SegmentNameComponent(super.encodedValue);
 
-  static Result<SegmentNameComponent> fromValue(List<int> value) {
+  static Result<SegmentNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
     switch (NonNegativeInteger.fromValue(value)) {
       // ignore: pattern_never_matches_value_type
       case Success(:final tlvElement):
         return Success(SegmentNameComponent(tlvElement));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(
+            TlvType.segmentNameComponent.number,
+            exception.message,
+          ),
+        );
     }
   }
 
@@ -53,13 +62,20 @@ final class SegmentNameComponent extends NonNegativeIntegerNameComponent {
 final class ByteOffsetNameComponent extends NonNegativeIntegerNameComponent {
   const ByteOffsetNameComponent(super.encodedValue);
 
-  static Result<ByteOffsetNameComponent> fromValue(List<int> value) {
+  static Result<ByteOffsetNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
     switch (NonNegativeInteger.fromValue(value)) {
       // ignore: pattern_never_matches_value_type
       case Success(:final tlvElement):
         return Success(ByteOffsetNameComponent(tlvElement));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(
+            TlvType.byteOffsetNameComponent.number,
+            exception.message,
+          ),
+        );
     }
   }
 
@@ -73,13 +89,20 @@ final class ByteOffsetNameComponent extends NonNegativeIntegerNameComponent {
 final class VersionNameComponent extends NonNegativeIntegerNameComponent {
   const VersionNameComponent(super.encodedValue);
 
-  static Result<VersionNameComponent> fromValue(List<int> value) {
+  static Result<VersionNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
     switch (NonNegativeInteger.fromValue(value)) {
       // ignore: pattern_never_matches_value_type
       case Success(:final tlvElement):
         return Success(VersionNameComponent(tlvElement));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(
+            TlvType.versionNameComponent.number,
+            exception.message,
+          ),
+        );
     }
   }
 
@@ -93,13 +116,20 @@ final class VersionNameComponent extends NonNegativeIntegerNameComponent {
 final class TimestampNameComponent extends NonNegativeIntegerNameComponent {
   const TimestampNameComponent(super.encodedValue);
 
-  static Result<TimestampNameComponent> fromValue(List<int> value) {
+  static Result<TimestampNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
     switch (NonNegativeInteger.fromValue(value)) {
       // ignore: pattern_never_matches_value_type
       case Success(:final tlvElement):
         return Success(TimestampNameComponent(tlvElement));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(
+            TlvType.timestampNameComponent.number,
+            exception.message,
+          ),
+        );
     }
   }
 
@@ -113,13 +143,20 @@ final class TimestampNameComponent extends NonNegativeIntegerNameComponent {
 final class SequenceNumNameComponent extends NonNegativeIntegerNameComponent {
   const SequenceNumNameComponent(super.encodedValue);
 
-  static Result<SequenceNumNameComponent> fromValue(List<int> value) {
+  static Result<SequenceNumNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
     switch (NonNegativeInteger.fromValue(value)) {
       // ignore: pattern_never_matches_value_type
       case Success(:final tlvElement):
         return Success(SequenceNumNameComponent(tlvElement));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(
+            TlvType.sequenceNumNameComponent.number,
+            exception.message,
+          ),
+        );
     }
   }
 

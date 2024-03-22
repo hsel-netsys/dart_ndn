@@ -23,12 +23,17 @@ final class ParametersSha256DigestComponent extends NameComponent {
 
   static const int _digestLength = 32;
 
-  static Result<ParametersSha256DigestComponent> fromValue(List<int> value) {
+  static Result<ParametersSha256DigestComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
     final length = value.length;
 
     if (length != _digestLength) {
       return Fail(
-        FormatException("Encountered an invalid digest length of $length}"),
+        DecodingException(
+          TlvType.parametersSha256DigestComponent.number,
+          "Encountered an invalid digest length of $length}",
+        ),
       );
     }
 

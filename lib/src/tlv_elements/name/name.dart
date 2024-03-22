@@ -25,7 +25,7 @@ final class Name extends KnownTlvElement implements Comparable<Name> {
 
   Name.fromString(String name) : nameComponents = name.toNameComponents();
 
-  static Result<Name> fromValue(List<int> value) {
+  static Result<Name, DecodingException> fromValue(List<int> value) {
     // TODO: Deal with invalid nameComponents
     final nameComponents =
         value.toTvlElements().whereType<NameComponent>().toList();

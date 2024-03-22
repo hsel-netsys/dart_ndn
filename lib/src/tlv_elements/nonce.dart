@@ -23,11 +23,16 @@ final class Nonce extends KnownTlvElement {
       : encodedValue =
             value ?? List.generate(4, (index) => Random().nextInt(256));
 
-  static Result<Nonce> fromValue(List<int> value) {
+  static Result<Nonce, DecodingException> fromValue(List<int> value) {
     final isValid = _checkNonceValue(value);
 
     if (!isValid) {
-      return const Fail(FormatException("Encountered invalid Nonce format"));
+      return Fail(
+        DecodingException(
+          TlvType.nonce.number,
+          "Encountered invalid Nonce format",
+        ),
+      );
     }
 
     return Success(Nonce(value));
@@ -54,10 +59,11 @@ final class CanBePrefix extends FlagTlvElement {
   const CanBePrefix();
 
   // TODO: Refactor
-  static Result<MustBeFresh> fromValue(List<int> value) {
+  static Result<MustBeFresh, DecodingException> fromValue(List<int> value) {
     if (value.isNotEmpty) {
       return Fail(
-        FormatException(
+        DecodingException(
+          TlvType.canBePrefix.number,
           "Expected an empty value, encountered ${value.length} bytes",
         ),
       );
@@ -73,10 +79,11 @@ final class CanBePrefix extends FlagTlvElement {
 final class MustBeFresh extends FlagTlvElement {
   const MustBeFresh();
 
-  static Result<MustBeFresh> fromValue(List<int> value) {
+  static Result<MustBeFresh, DecodingException> fromValue(List<int> value) {
     if (value.isNotEmpty) {
       return Fail(
-        FormatException(
+        DecodingException(
+          TlvType.mustBeFresh.number,
           "Expected an empty value, encountered ${value.length} bytes",
         ),
       );
@@ -100,21 +107,27 @@ final class ForwardingHint extends KnownTlvElement {
   @override
   List<int> get encodedValue => names.encode().toList();
 
-  static Result<ForwardingHint> fromValue(List<int> value) {
+  static Result<ForwardingHint, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
     final List<Name> names = [];
 
     for (final tlvElement in tlvElements) {
       switch (tlvElement) {
-        case Success<Name>(:final tlvElement):
-          names.add(tlvElement);
+        case Success(:final tlvElement):
+          if (tlvElement is Name) {
+            names.add(tlvElement);
+            continue;
+          }
+
+          return Fail(
+            DecodingException(
+              tlvElement.type,
+              "Encountered a non-name TlvElement",
+            ),
+          );
         case Fail(:final exception):
           return Fail(exception);
-        default:
-          return const Fail(
-            FormatException("Encountered a non-name TlvElement"),
-          );
       }
     }
 
@@ -134,14 +147,16 @@ final class InterestLifetime extends KnownTlvElement {
   List<int> get encodedValue =>
       NonNegativeInteger(duration.inMilliseconds).encode();
 
-  static Result<TlvElement> fromValue(List<int> value) {
+  static Result<TlvElement, DecodingException> fromValue(List<int> value) {
     switch (NonNegativeInteger.fromValue(value)) {
       // ignore: pattern_never_matches_value_type
       case Success(:final tlvElement):
         final duration = Duration(milliseconds: tlvElement);
         return Success(InterestLifetime(duration));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(TlvType.interestLifetime.number, exception.message),
+        );
     }
   }
 }
@@ -149,16 +164,20 @@ final class InterestLifetime extends KnownTlvElement {
 final class HopLimit extends KnownTlvElement {
   const HopLimit(this.hopLimit);
 
-  static Result<HopLimit> fromValue(List<int> value) {
+  static Result<HopLimit, DecodingException> fromValue(List<int> value) {
+    final type = TlvType.hopLimit.number;
     final length = value.length;
     if (length != 1) {
-      Fail(FormatException("Expected length of 1, encountered $length"));
+      return Fail(
+        DecodingException(type, "Expected length of 1, encountered $length"),
+      );
     }
 
     final byteValue = value.first;
     if (!byteValue.isByte) {
-      Fail(
-        FormatException(
+      return Fail(
+        DecodingException(
+          type,
           "Expected value to be in the range [0, 255], encountered $byteValue",
         ),
       );

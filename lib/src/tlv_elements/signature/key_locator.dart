@@ -13,7 +13,7 @@ import "../tlv_type.dart";
 abstract base class KeyLocator extends KnownTlvElement {
   const KeyLocator();
 
-  static Result<KeyLocator> fromValue(List<int> value) {
+  static Result<KeyLocator, DecodingException> fromValue(List<int> value) {
     final firstTlvElement = value.toTvlElements().firstOrNull;
 
     switch (firstTlvElement) {
@@ -29,14 +29,24 @@ abstract base class KeyLocator extends KnownTlvElement {
           case KeyDigest():
             keyLocator = KeyDigestKeyLocator(tlvElement);
           default:
-            return const Fail(FormatException("Invalid value for KeyLocator."));
+            return Fail(
+              DecodingException(
+                tlvElement.type,
+                "Invalid value for KeyLocator.",
+              ),
+            );
         }
 
         return Success(keyLocator);
 
       default:
         // TODO: Check for length etc.
-        return const Fail(FormatException("Missing value for KeyLocator"));
+        return Fail(
+          DecodingException(
+            TlvType.keyLocator.number,
+            "Missing value for KeyLocator",
+          ),
+        );
     }
   }
 

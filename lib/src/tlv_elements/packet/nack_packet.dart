@@ -14,16 +14,20 @@ import "lp_packet.dart";
 final class NackPacket extends LpPacket {
   const NackPacket([this.nackReason]);
 
-  static Result<NackPacket> fromValue(List<int> value) {
+  static Result<NackPacket, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
     NackReason? nackReason;
 
     for (final tlvElement in tlvElements) {
-      if (tlvElement is Success<NackReason>) {
+      if (tlvElement is Success<NackReason, DecodingException>) {
         nackReason ??= tlvElement.tlvElement;
       }
-      // TODO: Deal with critical fails
+
+      if (tlvElement is Fail<TlvElement, DecodingException> &&
+          tlvElement.exception.isCriticalError) {
+        return Fail(DecodingException(tlvElement.exception.type));
+      }
     }
 
     return Success(NackPacket(nackReason));
@@ -58,14 +62,19 @@ enum NackReasonValue {
 final class NackReason extends KnownTlvElement {
   const NackReason([this._nackReasonValue]);
 
-  static Result<NackReason> fromValue(List<int> value) {
+  static Result<NackReason, DecodingException> fromValue(List<int> value) {
     switch (NonNegativeInteger.fromValue(value)) {
       // ignore: pattern_never_matches_value_type
       case Success(:final tlvElement):
         final nackReasonValue = NackReasonValue.tryParse(tlvElement.value);
         return Success(NackReason(nackReasonValue));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(
+            TlvType.nackReason.number,
+            exception.message,
+          ),
+        );
     }
   }
 

@@ -56,17 +56,24 @@ final class InterestSignatureInfo extends KnownTlvElement {
     return result;
   }
 
-  static Result<InterestSignatureInfo> fromValue(List<int> value) {
+  static Result<InterestSignatureInfo, DecodingException> fromValue(
+    List<int> value,
+  ) {
     final tlvElements = value.toTvlElements();
 
     switch (tlvElements.firstOrNull) {
-      case Success<SignatureType>(:final tlvElement):
+      case Success<SignatureType, DecodingException>(:final tlvElement):
         // TODO: Also deal with the other potential fields
         return Success(InterestSignatureInfo(tlvElement));
       case Fail(:final exception):
         return Fail(exception);
       default:
-        return const Fail(FormatException("Missing SignatureType TlvElement"));
+        return Fail(
+          DecodingException(
+            TlvType.interestSignatureInfo.number,
+            "Missing SignatureType TlvElement",
+          ),
+        );
     }
   }
 }

@@ -16,7 +16,7 @@ import "../tlv_type.dart";
 final class SignatureNonce extends OctetTlvElement {
   const SignatureNonce(super.value);
 
-  static Result<SignatureNonce> fromValue(List<int> value) =>
+  static Result<SignatureNonce, DecodingException> fromValue(List<int> value) =>
       Success(SignatureNonce(value));
 
   @override

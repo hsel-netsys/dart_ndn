@@ -7,13 +7,13 @@
 import "package:meta/meta.dart";
 
 @immutable
-sealed class Result<T> {
+sealed class Result<T, U extends Exception> {
   const Result();
 
   T unwrap();
 }
 
-final class Success<T> extends Result<T> {
+final class Success<T, U extends Exception> extends Result<T, U> {
   const Success(this.tlvElement);
 
   final T tlvElement;
@@ -22,10 +22,10 @@ final class Success<T> extends Result<T> {
   T unwrap() => tlvElement;
 }
 
-final class Fail<T> extends Result<T> {
+final class Fail<T, U extends Exception> extends Result<T, U> {
   const Fail(this.exception);
 
-  final Exception exception;
+  final U exception;
 
   @override
   T unwrap() => throw StateError("Is instance of Fail, not Success.");

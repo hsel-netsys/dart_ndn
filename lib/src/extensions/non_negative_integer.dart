@@ -18,7 +18,9 @@ extension type NonNegativeInteger(int value) implements int {
   @internal
   const NonNegativeInteger.fromInt(this.value);
 
-  static Result<NonNegativeInteger> fromValue(List<int> value) {
+  static Result<NonNegativeInteger, FormatException> fromValue(
+    List<int> value,
+  ) {
     final int decodedValue;
 
     if (value.length == 1) {

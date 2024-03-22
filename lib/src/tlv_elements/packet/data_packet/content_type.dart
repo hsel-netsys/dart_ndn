@@ -30,13 +30,15 @@ enum ContentTypeValue {
 final class ContentType extends NonNegativeIntegerTlvElement {
   const ContentType(super.value);
 
-  static Result<ContentType> fromValue(List<int> value) {
+  static Result<ContentType, DecodingException> fromValue(List<int> value) {
     switch (NonNegativeInteger.fromValue(value)) {
       // ignore: pattern_never_matches_value_type
       case Success(:final tlvElement):
         return Success(ContentType(tlvElement));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(TlvType.contentType.number, exception.message),
+        );
     }
   }
 

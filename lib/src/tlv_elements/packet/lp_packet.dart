@@ -6,6 +6,7 @@
 
 import "../../extensions/bytes_encoding.dart";
 import "../../result/result.dart";
+import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "nack_packet.dart";
 import "ndn_packet.dart";
@@ -14,11 +15,11 @@ base class LpPacket extends NdnPacket {
   const LpPacket();
 
   // TODO: Refactor and actually implement...
-  static Result<LpPacket> fromValue(List<int> value) {
+  static Result<LpPacket, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements().toList();
 
     switch (tlvElements.firstOrNull) {
-      case Success<NackPacket>(:final tlvElement):
+      case Success<NackPacket, DecodingException>(:final tlvElement):
         return Success(tlvElement);
       case Fail(:final exception):
         return Fail(exception);

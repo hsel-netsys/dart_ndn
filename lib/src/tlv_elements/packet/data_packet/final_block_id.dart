@@ -15,7 +15,7 @@ final class FinalBlockId extends KnownTlvElement {
 
   final NameComponent nameComponent;
 
-  static Result<FinalBlockId> fromValue(List<int> value) {
+  static Result<FinalBlockId, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
     NameComponent? nameComponent;
@@ -29,14 +29,20 @@ final class FinalBlockId extends KnownTlvElement {
               continue;
             }
 
-            return const Fail(
-              FormatException("Encountered out-of-order NameComponent"),
+            return Fail(
+              DecodingException(
+                TlvType.finalBlockId.number,
+                "Encountered out-of-order NameComponent",
+              ),
             );
           }
 
           if (tlvElement.isCritical) {
-            return const Fail(
-              FormatException("Encountered unrecognized TlvElement"),
+            return Fail(
+              DecodingException(
+                TlvType.finalBlockId.number,
+                "Encountered unrecognized TlvElement",
+              ),
             );
           }
 
@@ -46,8 +52,11 @@ final class FinalBlockId extends KnownTlvElement {
     }
 
     if (nameComponent == null) {
-      return const Fail(
-        FormatException("Missing NameComponent in FinalBlockId"),
+      return Fail(
+        DecodingException(
+          TlvType.finalBlockId.number,
+          "Missing NameComponent in FinalBlockId",
+        ),
       );
     }
 

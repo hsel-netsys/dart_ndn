@@ -11,7 +11,9 @@ import "../../tlv_type.dart";
 final class ApplicationParameters extends OctetTlvElement {
   const ApplicationParameters(super.value);
 
-  static Result<ApplicationParameters> fromValue(List<int> value) {
+  static Result<ApplicationParameters, DecodingException> fromValue(
+    List<int> value,
+  ) {
     return Success(ApplicationParameters(value));
   }
 

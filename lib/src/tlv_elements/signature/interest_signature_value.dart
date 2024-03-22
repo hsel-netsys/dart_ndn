@@ -11,7 +11,9 @@ import "../tlv_type.dart";
 final class InterestSignatureValue extends OctetTlvElement {
   const InterestSignatureValue(super.value);
 
-  static Result<InterestSignatureValue> fromValue(List<int> value) =>
+  static Result<InterestSignatureValue, DecodingException> fromValue(
+    List<int> value,
+  ) =>
       Success(InterestSignatureValue(value));
 
   @override

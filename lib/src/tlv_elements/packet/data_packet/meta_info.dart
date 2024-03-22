@@ -25,7 +25,7 @@ final class MetaInfo extends KnownTlvElement {
   @override
   TlvType get tlvType => TlvType.metaInfo;
 
-  static Result<MetaInfo> fromValue(List<int> value) {
+  static Result<MetaInfo, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
     Option<ContentType>? maybeContentType;
@@ -34,37 +34,49 @@ final class MetaInfo extends KnownTlvElement {
 
     for (final tlvElement in tlvElements) {
       switch (tlvElement) {
-        case Success<ContentType>(:final tlvElement):
+        case Success<ContentType, DecodingException>(:final tlvElement):
           if (maybeContentType == null) {
             maybeContentType = Some(tlvElement);
             continue;
           }
-          return const Fail(
-            FormatException("Encountered out-of-order ContentType"),
+          return Fail(
+            DecodingException(
+              tlvElement.type,
+              "Encountered out-of-order ContentType",
+            ),
           );
-        case Success<FreshnessPeriod>(:final tlvElement):
+        case Success<FreshnessPeriod, DecodingException>(:final tlvElement):
           maybeContentType ??= const None();
           if (maybeFreshnessPeriod == null) {
             maybeFreshnessPeriod = Some(tlvElement);
             continue;
           }
-          return const Fail(
-            FormatException("Encountered out-of-order FreshnessPeriod"),
+          return Fail(
+            DecodingException(
+              tlvElement.type,
+              "Encountered out-of-order FreshnessPeriod",
+            ),
           );
-        case Success<FinalBlockId>(:final tlvElement):
+        case Success<FinalBlockId, DecodingException>(:final tlvElement):
           maybeContentType ??= const None();
           maybeFreshnessPeriod ??= const None();
           if (maybeFinalBlockId == null) {
             maybeFinalBlockId = Some(tlvElement);
             continue;
           }
-          return const Fail(
-            FormatException("Encountered out-of-order FinalBlockId"),
+          return Fail(
+            DecodingException(
+              tlvElement.type,
+              "Encountered out-of-order FinalBlockId",
+            ),
           );
         case Success(:final tlvElement):
           if (tlvElement.isCritical) {
-            return const Fail(
-              FormatException("Encountered unrecognized TlvElement"),
+            return Fail(
+              DecodingException(
+                tlvElement.type,
+                "Encountered unrecognized TlvElement",
+              ),
             );
           }
         case Fail(:final exception):

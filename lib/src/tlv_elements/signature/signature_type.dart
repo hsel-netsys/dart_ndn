@@ -13,7 +13,7 @@ import "../tlv_type.dart";
 final class SignatureType extends KnownTlvElement {
   const SignatureType(this.signaturTypeValue);
 
-  static Result<SignatureType> fromValue(List<int> value) {
+  static Result<SignatureType, DecodingException> fromValue(List<int> value) {
     final decodedValue = NonNegativeInteger.fromValue(value);
 
     switch (decodedValue) {
@@ -22,11 +22,21 @@ final class SignatureType extends KnownTlvElement {
         final parsedValue = SignatureTypeValue.tryParse(tlvElement);
         if (parsedValue == null) {
           // TODO: Improve error handling
-          return Fail(FormatException("Unkown value $value "));
+          return Fail(
+            DecodingException(
+              TlvType.signatureType.number,
+              "Unkown value $value ",
+            ),
+          );
         }
         return Success(SignatureType(parsedValue));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(
+            TlvType.signatureType.number,
+            exception.message,
+          ),
+        );
     }
   }
 

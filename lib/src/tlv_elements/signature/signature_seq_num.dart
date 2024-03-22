@@ -12,13 +12,15 @@ import "../tlv_type.dart";
 final class SignatureSeqNum extends NonNegativeIntegerTlvElement {
   const SignatureSeqNum(super.sequenceNumber);
 
-  static Result<SignatureSeqNum> fromValue(List<int> value) {
+  static Result<SignatureSeqNum, DecodingException> fromValue(List<int> value) {
     switch (NonNegativeInteger.fromValue(value)) {
       // ignore: pattern_never_matches_value_type
       case Success(:final tlvElement):
         return Success(SignatureSeqNum(tlvElement));
       case Fail(:final exception):
-        return Fail(exception);
+        return Fail(
+          DecodingException(TlvType.signatureSeqNum.number, exception.message),
+        );
     }
   }
 

@@ -36,7 +36,9 @@ final class ControlParameters extends KnownTlvElement {
     this.expirationPeriod,
   });
 
-  static Result<ControlParameters> fromValue(List<int> value) {
+  static Result<ControlParameters, DecodingException> fromValue(
+    List<int> value,
+  ) {
     // TODO: Implement
     final _ = value.toTvlElements();
 

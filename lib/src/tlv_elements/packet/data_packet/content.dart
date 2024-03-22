@@ -11,7 +11,7 @@ import "../../tlv_type.dart";
 final class Content extends KnownTlvElement {
   const Content(this.encodedValue);
 
-  static Result<Content> fromValue(List<int> value) {
+  static Result<Content, DecodingException> fromValue(List<int> value) {
     return Success(Content(value));
   }
 

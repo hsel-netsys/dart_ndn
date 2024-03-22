@@ -14,7 +14,9 @@ import "../tlv_element.dart";
 abstract base class NdnPacket extends KnownTlvElement {
   const NdnPacket();
 
-  static Result<NdnPacket> tryParse(List<int> encodedPacket) {
+  static Result<NdnPacket, Exception> tryParse(
+    List<int> encodedPacket,
+  ) {
     final tlvElements = encodedPacket.toTvlElements();
 
     switch (tlvElements.firstOrNull) {
@@ -23,7 +25,8 @@ abstract base class NdnPacket extends KnownTlvElement {
           return Success(tlvElement);
         } else {
           return Fail(
-            FormatException(
+            DecodingException(
+              tlvElement.type,
               "Encountered an unexcepted TlvElement ${tlvElement.runtimeType}",
             ),
           );

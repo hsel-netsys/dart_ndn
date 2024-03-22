@@ -17,24 +17,29 @@ final class SignatureInfo extends KnownTlvElement {
     this.keyLocator,
   });
 
-  static Result<SignatureInfo> fromValue(List<int> value) {
+  static Result<SignatureInfo, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
     final SignatureType signatureType;
 
     switch (tlvElements.elementAtOrNull(0)) {
-      case Success<SignatureType>(:final tlvElement):
+      case Success<SignatureType, DecodingException>(:final tlvElement):
         signatureType = tlvElement;
       case Fail(:final exception):
         return Fail(exception);
       default:
-        return const Fail(FormatException("Missing SignatureType"));
+        return Fail(
+          DecodingException(
+            TlvType.signatureInfo.number,
+            "Missing SignatureType",
+          ),
+        );
     }
 
     final secondElement = tlvElements.elementAtOrNull(1);
     final KeyLocator? keyLocator;
 
-    if (secondElement is Success<KeyLocator>) {
+    if (secondElement is Success<KeyLocator, DecodingException>) {
       keyLocator = secondElement.tlvElement;
     } else {
       keyLocator = null;

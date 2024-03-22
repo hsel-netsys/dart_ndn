@@ -18,36 +18,36 @@ final class ControlResponse extends KnownTlvElement {
     this.body = const [],
   ]);
 
-  static Result<ControlResponse> fromValue(List<int> value) {
+  static Result<ControlResponse, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements().toList(growable: false);
     final List<TlvElement> body = [];
 
     final StatusCode statusCode;
+    final decodingException = DecodingException(
+      TlvType.controlResponse.number,
+      "Invalid format for ControlResponse",
+    );
 
     switch (tlvElements.firstOrNull) {
-      case Success<StatusCode>(:final tlvElement):
+      case Success<StatusCode, DecodingException>(:final tlvElement):
         statusCode = tlvElement;
-      case Fail<StatusCode>(:final exception):
+      case Fail<StatusCode, DecodingException>(:final exception):
         return Fail(exception);
 
       default:
-        return const Fail(
-          FormatException("Invalid format for ControlResponse"),
-        );
+        return Fail(decodingException);
     }
 
     final StatusText statusText;
 
     switch (tlvElements.elementAtOrNull(1)) {
-      case Success<StatusText>(:final tlvElement):
+      case Success<StatusText, DecodingException>(:final tlvElement):
         statusText = tlvElement;
-      case Fail<StatusText>(:final exception):
+      case Fail<StatusText, DecodingException>(:final exception):
         return Fail(exception);
 
       default:
-        return const Fail(
-          FormatException("Invalid format for ControlResponse"),
-        );
+        return Fail(decodingException);
     }
 
     if (tlvElements.length > 2) {
@@ -55,8 +55,8 @@ final class ControlResponse extends KnownTlvElement {
         switch (tlvElement) {
           case Success(:final tlvElement):
             body.add(tlvElement);
+          // TODO: Should this propagated?
           case Fail(:final exception):
-            // TODO: Differentiate between critical and non-critical
             return Fail(exception);
         }
       }
