@@ -43,7 +43,7 @@ final class SignatureType extends KnownTlvElement {
   final SignatureTypeValue signaturTypeValue;
 
   @override
-  TlvType get tlvType => TlvType.signatureValue;
+  TlvType get tlvType => TlvType.signatureType;
 
   @override
   List<int> get encodedValue => signaturTypeValue.encode();

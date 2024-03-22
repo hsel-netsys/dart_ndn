@@ -11,9 +11,12 @@ import "../../result/result.dart";
 import "../name/name.dart";
 import "../name/name_component.dart";
 import "../nonce.dart";
+import "../signature/interest_signature_info.dart";
+import "../signature/interest_signature_value.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "data_packet.dart";
+import "interest_packet/application_parameters.dart";
 import "ndn_packet.dart";
 
 final class InterestPacket extends NdnPacket {
@@ -21,22 +24,28 @@ final class InterestPacket extends NdnPacket {
     required String name,
     this.canBePrefix = false,
     this.mustBeFresh = false,
-    bool generateNonce = true,
+    List<int>? nonce,
     this.forwardingHint,
     this.lifetime,
     this.hopLimit,
+    this.applicationParameters,
+    this.interestSignatureInfo,
+    this.interestSignatureValue,
   })  : name = Name.fromString(name),
-        nonce = generateNonce ? Nonce() : null;
+        nonce = Nonce(nonce);
 
   InterestPacket.fromName(
     this.name, {
     this.canBePrefix = false,
     this.mustBeFresh = false,
-    bool generateNonce = true,
+    List<int>? nonce,
     this.forwardingHint,
     this.lifetime,
     this.hopLimit,
-  }) : nonce = generateNonce ? Nonce() : null;
+    this.applicationParameters,
+    this.interestSignatureInfo,
+    this.interestSignatureValue,
+  }) : nonce = Nonce(nonce);
 
   // TODO: Improve error handling
   static Result<InterestPacket, DecodingException> fromValue(List<int> value) {
@@ -80,7 +89,11 @@ final class InterestPacket extends NdnPacket {
 
   final bool isSigned = false;
 
-  // final SignatureInfo? signatureInfo;
+  final ApplicationParameters? applicationParameters;
+
+  final InterestSignatureInfo? interestSignatureInfo;
+
+  final InterestSignatureValue? interestSignatureValue;
 
   Uri toUri() {
     return Uri();
@@ -129,6 +142,21 @@ final class InterestPacket extends NdnPacket {
     final hopLimit = this.hopLimit;
     if (hopLimit != null) {
       encodedValues.addAll(HopLimit(hopLimit).encode());
+    }
+
+    final applicationParameters = this.applicationParameters;
+    if (applicationParameters != null) {
+      encodedValues.addAll(applicationParameters.encode());
+
+      final interestSignatureInfo = this.interestSignatureInfo;
+      if (interestSignatureInfo != null) {
+        encodedValues.addAll(interestSignatureInfo.encode());
+      }
+
+      final interestSignatureValue = this.interestSignatureValue;
+      if (interestSignatureValue != null) {
+        encodedValues.addAll(interestSignatureValue.encode());
+      }
     }
 
     return encodedValues;

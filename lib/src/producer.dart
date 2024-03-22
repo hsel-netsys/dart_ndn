@@ -27,8 +27,10 @@ class Producer extends Stream<InterestPacket> {
         _interestPacketStream =
             _filterInterestPackets(_face.asBroadcastStream());
 
-  // TODO: Refactor
-  static Future<Producer> create([Uri? uri]) async {
+  static Future<Producer> create({
+    Uri? uri,
+    Signer? signer,
+  }) async {
     final Transport transport;
 
     final faceUri = uri ?? Uri(scheme: "unix");
@@ -45,9 +47,9 @@ class Producer extends Stream<InterestPacket> {
     }
 
     final face = Face.fromTransport(transport);
-    final consumer = Producer(face).._hasInternalFace = true;
+    final producer = Producer(face, signer: signer).._hasInternalFace = true;
 
-    return consumer;
+    return producer;
   }
 
   Future<void> registerPrefix(
