@@ -13,6 +13,7 @@ import "tlv_elements/packet/interest_packet.dart";
 import "tlv_elements/packet/interest_packet/application_parameters.dart";
 import "tlv_elements/signature/interest_signature_info.dart";
 import "tlv_elements/signature/interest_signature_value.dart";
+import "tlv_elements/signature/key_locator.dart";
 import "tlv_elements/signature/signature_type.dart";
 
 class Signer {
@@ -29,10 +30,12 @@ class Signer {
     final applicationParameters =
         interestPacket.applicationParameters ?? const ApplicationParameters([]);
 
-    final interestSignatureInfo =
-        InterestSignatureInfo(SignatureType(signatureTypeValue));
+    final interestSignatureInfo = InterestSignatureInfo(
+      SignatureType(signatureTypeValue),
+      keyLocator: NameKeyLocator(Name.fromString("/example/testApp/KEY")),
+    );
 
-    final yo = InterestPacket.fromName(
+    final signatureInput = InterestPacket.fromName(
       orginalName,
       canBePrefix: interestPacket.canBePrefix,
       mustBeFresh: interestPacket.mustBeFresh,
@@ -40,13 +43,13 @@ class Signer {
       forwardingHint: interestPacket.forwardingHint,
       applicationParameters: applicationParameters,
       interestSignatureInfo: interestSignatureInfo,
-    );
+    ).encode();
 
     final List<int> signature;
 
     switch (signatureTypeValue) {
       case SignatureTypeValue.digestSha256:
-        signature = sha256.convert(yo.encode()).bytes;
+        signature = sha256.convert(signatureInput).bytes;
       default:
         throw UnimplementedError();
     }
