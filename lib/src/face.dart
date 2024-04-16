@@ -47,7 +47,11 @@ class Face extends Stream<NdnPacket> {
       completer.complete(InterestTimedOut());
     });
 
-    transport.asBroadcastStream().listen((event) {
+    transport
+        .asBroadcastStream(
+      onCancel: (subscription) async => await subscription.cancel(),
+    )
+        .listen((event) {
       if (completer.isCompleted) {
         return;
       }
@@ -80,7 +84,11 @@ class Face extends Stream<NdnPacket> {
     void Function()? onDone,
     bool? cancelOnError,
   }) =>
-      transport.asBroadcastStream().listen(
+      transport
+          .asBroadcastStream(
+            onCancel: (subscription) async => await subscription.cancel(),
+          )
+          .listen(
             onData,
             onError: onError,
             onDone: onDone,

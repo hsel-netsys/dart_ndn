@@ -1,0 +1,22 @@
+// Copyright 2024 The dart_ndn Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+//
+// SPDX-License-Identifier: BSD-3-Clause
+
+import "dart:convert";
+
+import "../tlv_element.dart";
+import "../tlv_type.dart";
+
+final class UriElement extends KnownTlvElement {
+  const UriElement(this.uri);
+
+  final Uri uri;
+
+  @override
+  TlvType get tlvType => TlvType.uri;
+
+  @override
+  List<int> get encodedValue => utf8.encode(uri.toString());
+}

@@ -79,6 +79,20 @@ enum TlvType {
   statusCode(102, TypeCategory.nfdManagement),
   statusText(103, TypeCategory.nfdManagement),
   controlParameters(104, TypeCategory.nfdManagement),
+  faceId(105, TypeCategory.nfdManagement),
+  cost(106, TypeCategory.nfdManagement),
+  strategy(107, TypeCategory.nfdManagement),
+  flags(108, TypeCategory.nfdManagement),
+  expirationPeriod(109, TypeCategory.nfdManagement),
+  origin(111, TypeCategory.nfdManagement),
+  mask(112, TypeCategory.nfdManagement),
+  uri(114, TypeCategory.nfdManagement),
+  localUri(129, TypeCategory.nfdManagement),
+  capacity(131, TypeCategory.nfdManagement),
+  count(132, TypeCategory.nfdManagement),
+  baseCongestionMarkingInterval(135, TypeCategory.nfdManagement),
+  defaultCongestionThreshold(136, TypeCategory.nfdManagement),
+  mtu(137, TypeCategory.nfdManagement),
   ;
 
   const TlvType(this.number, this.category);

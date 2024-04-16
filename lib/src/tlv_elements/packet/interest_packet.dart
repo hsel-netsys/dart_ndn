@@ -4,14 +4,19 @@
 //
 // SPDX-License-Identifier: BSD-3-Clause
 
-import "dart:convert";
+import "package:convert/convert.dart";
 
 import "../../extensions/bytes_encoding.dart";
+import "../../result/result.dart";
 import "../name/name.dart";
 import "../name/name_component.dart";
 import "../nonce.dart";
+import "../signature/interest_signature_info.dart";
+import "../signature/interest_signature_value.dart";
+import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "data_packet.dart";
+import "interest_packet/application_parameters.dart";
 import "ndn_packet.dart";
 
 final class InterestPacket extends NdnPacket {
@@ -19,38 +24,53 @@ final class InterestPacket extends NdnPacket {
     required String name,
     this.canBePrefix = false,
     this.mustBeFresh = false,
-    bool generateNonce = true,
+    List<int>? nonce,
     this.forwardingHint,
     this.lifetime,
     this.hopLimit,
+    this.applicationParameters,
+    this.interestSignatureInfo,
+    this.interestSignatureValue,
   })  : name = Name.fromString(name),
-        nonce = generateNonce ? Nonce() : null;
+        nonce = Nonce(nonce);
 
   InterestPacket.fromName(
     this.name, {
     this.canBePrefix = false,
     this.mustBeFresh = false,
-    bool generateNonce = true,
+    List<int>? nonce,
     this.forwardingHint,
     this.lifetime,
     this.hopLimit,
-  }) : nonce = generateNonce ? Nonce() : null;
+    this.applicationParameters,
+    this.interestSignatureInfo,
+    this.interestSignatureValue,
+  }) : nonce = Nonce(nonce);
 
-// TODO: Add error handling
-  factory InterestPacket.fromValue(List<int> value) {
+  // TODO: Improve error handling
+  static Result<InterestPacket, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
     final nameComponents = <NameComponent>[];
 
     for (final tlvElement in tlvElements) {
-      switch (tlvElement.type) {
-        case 8:
-          nameComponents
-              .add(GenericNameComponent(utf8.decode(tlvElement.value)));
+      switch (tlvElement) {
+        case Success<NameComponent, DecodingException>(:final tlvElement):
+          nameComponents.add(tlvElement);
+        case Fail(:final exception):
+          // TODO: Deal with critical fails
+          return Fail(exception);
+
+        default:
+          continue;
       }
     }
 
-    return InterestPacket.fromName(Name(nameComponents));
+    // TODO: Also deal with other TlvElements
+
+    final result = InterestPacket.fromName(Name(nameComponents));
+
+    return Success(result);
   }
 
   final Name name;
@@ -69,7 +89,11 @@ final class InterestPacket extends NdnPacket {
 
   final bool isSigned = false;
 
-  // final SignatureInfo? signatureInfo;
+  final ApplicationParameters? applicationParameters;
+
+  final InterestSignatureInfo? interestSignatureInfo;
+
+  final InterestSignatureValue? interestSignatureValue;
 
   Uri toUri() {
     return Uri();
@@ -86,18 +110,18 @@ final class InterestPacket extends NdnPacket {
 
   @override
   // TODO: Check if this can be made more efficient
-  int get length => value.length;
+  int get length => encodedValue.length;
 
   @override
-  List<int> get value {
+  List<int> get encodedValue {
     final encodedValues = name.encode().toList();
 
     if (canBePrefix) {
-      encodedValues.addAll(CanBePrefix().encode());
+      encodedValues.addAll(const CanBePrefix().encode());
     }
 
     if (mustBeFresh) {
-      encodedValues.addAll(MustBeFresh().encode());
+      encodedValues.addAll(const MustBeFresh().encode());
     }
 
     final forwardingHint = this.forwardingHint;
@@ -120,6 +144,21 @@ final class InterestPacket extends NdnPacket {
       encodedValues.addAll(HopLimit(hopLimit).encode());
     }
 
+    final applicationParameters = this.applicationParameters;
+    if (applicationParameters != null) {
+      encodedValues.addAll(applicationParameters.encode());
+
+      final interestSignatureInfo = this.interestSignatureInfo;
+      if (interestSignatureInfo != null) {
+        encodedValues.addAll(interestSignatureInfo.encode());
+      }
+
+      final interestSignatureValue = this.interestSignatureValue;
+      if (interestSignatureValue != null) {
+        encodedValues.addAll(interestSignatureValue.encode());
+      }
+    }
+
     return encodedValues;
   }
 }
@@ -135,14 +174,13 @@ extension NameComponentExtension on String {
 
     final result = <NameComponent>[];
 
+    // TODO: Deal with other namecomponents
     for (final component in components) {
-      result.add(GenericNameComponent(component));
+      result.add(GenericNameComponent(percent.decode(component)));
     }
 
     return result;
   }
 }
-
-class SignatureInfo {}
 
 extension type RecordId(int id) {}

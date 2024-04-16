@@ -16,17 +16,37 @@ part of "../name_component.dart";
 ///
 /// [NDN Packet Specification]: https://docs.named-data.net/NDN-packet-spec/current/name.html#implicit-digest-component
 final class ImplicitSha256DigestComponent extends NameComponent {
-  const ImplicitSha256DigestComponent(this.value);
+  const ImplicitSha256DigestComponent(this.encodedValue);
+
+  static const int _digestLength = 32;
+
+  static Result<ImplicitSha256DigestComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
+    final length = value.length;
+
+    if (length != _digestLength) {
+      return Fail(
+        DecodingException(
+          TlvType.implicitSha256DigestComponent.number,
+          "Encountered an invalid digest length of $length}",
+        ),
+      );
+    }
+
+    return Success(ImplicitSha256DigestComponent(value));
+  }
 
   @override
   TlvType get tlvType => TlvType.implicitSha256DigestComponent;
 
   @override
-  final List<int> value;
+  final List<int> encodedValue;
 
-  /// Indicates whether the SHA-256 [value] has a [length] of 32 bytes.
-  bool get isValid => length == 32;
+  /// Indicates whether the SHA-256 [encodedValue] has a [length] of 32 bytes.
+  @override
+  bool get isValid => length == _digestLength;
 
   @override
-  TlvValueFormat get tlvValueFormat => TlvValueFormat.octet32;
+  String toPathSegment() => "params-sha256=${hex.encode(encodedValue)}";
 }

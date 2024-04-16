@@ -14,21 +14,20 @@ abstract base class KeyLocator extends KnownTlvElement {
   const KeyLocator();
 
   static Result<KeyLocator, DecodingException> fromValue(List<int> value) {
-    // TODO: Check if there are critical elements remaining.
-    final tlvElement = value.toTvlElements().firstOrNull;
+    final firstTlvElement = value.toTvlElements().firstOrNull;
 
-    switch (tlvElement) {
+    switch (firstTlvElement) {
       case Fail(:final exception):
-        return Fail(
-          DecodingException(TlvType.keyLocator.number, exception.message),
-        );
+        return Fail(exception);
 
       case Success(:final tlvElement):
+        final KeyLocator keyLocator;
+
         switch (tlvElement) {
           case Name():
-            return Success(NameKeyLocator(tlvElement));
+            keyLocator = NameKeyLocator(tlvElement);
           case KeyDigest():
-            return Success(KeyDigestKeyLocator(tlvElement));
+            keyLocator = KeyDigestKeyLocator(tlvElement);
           default:
             return Fail(
               DecodingException(
@@ -37,11 +36,15 @@ abstract base class KeyLocator extends KnownTlvElement {
               ),
             );
         }
+
+        return Success(keyLocator);
+
       default:
+        // TODO: Check for length etc.
         return Fail(
           DecodingException(
             TlvType.keyLocator.number,
-            "Missing value for KeyLocator.",
+            "Missing value for KeyLocator",
           ),
         );
     }
@@ -60,14 +63,11 @@ final class NameKeyLocator extends KeyLocator {
   List<int> get encodedValue => name.encode().toList();
 }
 
-final class KeyDigest extends KnownTlvElement {
-  const KeyDigest(this.encodedValue);
+final class KeyDigest extends OctetTlvElement {
+  const KeyDigest(super.value);
 
   @override
   TlvType get tlvType => TlvType.keyDigest;
-
-  @override
-  final List<int> encodedValue;
 }
 
 final class KeyDigestKeyLocator extends KeyLocator {

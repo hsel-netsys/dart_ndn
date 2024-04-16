@@ -7,38 +7,22 @@
 part of "../name_component.dart";
 
 final class GenericNameComponent extends NameComponent {
-  const GenericNameComponent(this.content);
+  const GenericNameComponent(this.encodedValue);
 
-  factory GenericNameComponent.fromValue(List<int> value) {
-    // TODO: Will probably not be UTF-8
-    final content = utf8.decode(value);
-    return GenericNameComponent(content);
-  }
+  static Result<GenericNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) =>
+      Success(GenericNameComponent(value));
 
-  final String content;
-
-  @override
-  TlvType get tlvType => TlvType.genericNameComponent;
-
-  @override
-  List<int> get value => utf8.encode(content);
-
-  @override
-  TlvValueFormat get tlvValueFormat => TlvValueFormat.octetStar;
-}
-
-// TODO: Move somewhere else?
-final class ControlParametersNameComponent extends NameComponent {
-  const ControlParametersNameComponent(this.controlParameters);
-
-  final ControlParameters controlParameters;
+  // TODO: Deal with special characters: https://docs.named-data.net/NDN-packet-spec/current/name.html#ndn-uri-scheme
+  String get content => percent.encode(encodedValue);
 
   @override
   TlvType get tlvType => TlvType.genericNameComponent;
 
   @override
-  List<int> get value => controlParameters.encode().toList();
+  final List<int> encodedValue;
 
   @override
-  TlvValueFormat get tlvValueFormat => TlvValueFormat.octetStar;
+  String toPathSegment() => percentEncodedValue;
 }

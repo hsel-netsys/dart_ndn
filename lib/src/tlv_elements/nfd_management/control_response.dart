@@ -6,6 +6,7 @@
 
 import "../../extensions/bytes_encoding.dart";
 import "../../extensions/tlv_element_encoding.dart";
+import "../../result/result.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "status.dart";
@@ -17,25 +18,56 @@ final class ControlResponse extends KnownTlvElement {
     this.body = const [],
   ]);
 
-  factory ControlResponse.fromValue(List<int> value) {
+  static Result<ControlResponse, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements().toList(growable: false);
     final List<TlvElement> body = [];
 
-    final statusCode = tlvElements.firstOrNull;
-    final statusText = tlvElements.elementAtOrNull(1);
+    final StatusCode statusCode;
+    final decodingException = DecodingException(
+      TlvType.controlResponse.number,
+      "Invalid format for ControlResponse",
+    );
 
-    if (statusCode is! StatusCode || statusText is! StatusText) {
-      throw const FormatException("Invalid format for ControlResponse");
+    switch (tlvElements.firstOrNull) {
+      case Success<StatusCode, DecodingException>(:final tlvElement):
+        statusCode = tlvElement;
+      case Fail<StatusCode, DecodingException>(:final exception):
+        return Fail(exception);
+
+      default:
+        return Fail(decodingException);
+    }
+
+    final StatusText statusText;
+
+    switch (tlvElements.elementAtOrNull(1)) {
+      case Success<StatusText, DecodingException>(:final tlvElement):
+        statusText = tlvElement;
+      case Fail<StatusText, DecodingException>(:final exception):
+        return Fail(exception);
+
+      default:
+        return Fail(decodingException);
     }
 
     if (tlvElements.length > 2) {
-      body.addAll(tlvElements.sublist(2));
+      for (final tlvElement in tlvElements.sublist(2)) {
+        switch (tlvElement) {
+          case Success(:final tlvElement):
+            body.add(tlvElement);
+          // TODO: Should this propagated?
+          case Fail(:final exception):
+            return Fail(exception);
+        }
+      }
     }
 
-    return ControlResponse(
-      statusCode,
-      statusText,
-      body,
+    return Success(
+      ControlResponse(
+        statusCode,
+        statusText,
+        body,
+      ),
     );
   }
 
@@ -49,7 +81,7 @@ final class ControlResponse extends KnownTlvElement {
   TlvType get tlvType => TlvType.controlResponse;
 
   @override
-  List<int> get value => [
+  List<int> get encodedValue => [
         ...statusCode.encode(),
         ...statusText.encode(),
         ...body.encode(),

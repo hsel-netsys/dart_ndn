@@ -6,8 +6,10 @@
 
 import "dart:async";
 
+import "extensions/non_negative_integer.dart";
 import "face.dart";
 import "nfd_management/nfd_controller.dart";
+import "signer.dart";
 import "tlv_elements/name/name.dart";
 import "tlv_elements/packet/data_packet.dart";
 import "tlv_elements/packet/interest_packet.dart";
@@ -15,13 +17,20 @@ import "tlv_elements/packet/ndn_packet.dart";
 import "transport.dart";
 
 class Producer extends Stream<InterestPacket> {
-  Producer(this._face)
-      : _nfdController = NfdController(_face),
+  Producer(
+    this._face, {
+    Signer? signer,
+  })  : _nfdController = NfdController(
+          _face,
+          signer: signer,
+        ),
         _interestPacketStream =
             _filterInterestPackets(_face.asBroadcastStream());
 
-  // TODO: Refactor
-  static Future<Producer> create([Uri? uri]) async {
+  static Future<Producer> create({
+    Uri? uri,
+    Signer? signer,
+  }) async {
     final Transport transport;
 
     final faceUri = uri ?? Uri(scheme: "unix");
@@ -38,13 +47,27 @@ class Producer extends Stream<InterestPacket> {
     }
 
     final face = Face.fromTransport(transport);
-    final consumer = Producer(face).._hasInternalFace = true;
+    final producer = Producer(face, signer: signer).._hasInternalFace = true;
 
-    return consumer;
+    return producer;
   }
 
-  Future<void> registerPrefix(Name prefix) async {
-    await _nfdController.registerRoute(prefix);
+  Future<void> registerPrefix(
+    Name prefix, {
+    NonNegativeInteger? faceId,
+    NonNegativeInteger? origin,
+    NonNegativeInteger? cost,
+    NonNegativeInteger? flags,
+    NonNegativeInteger? expirationPeriod,
+  }) async {
+    await _nfdController.registerRoute(
+      prefix,
+      faceId: faceId,
+      origin: origin,
+      cost: cost,
+      flags: flags,
+      expirationPeriod: expirationPeriod,
+    );
   }
 
   Future<void> satifisfyInterest(

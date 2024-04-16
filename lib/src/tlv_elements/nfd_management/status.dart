@@ -7,37 +7,52 @@
 import "dart:convert";
 
 import "../../extensions/non_negative_integer.dart";
+import "../../result/result.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 
-final class StatusCode extends KnownTlvElement {
-  const StatusCode(this.code);
+final class StatusCode extends NonNegativeIntegerTlvElement {
+  const StatusCode(super.value);
 
-  factory StatusCode.fromValue(List<int> value) {
+  static Result<StatusCode, DecodingException> fromValue(List<int> value) {
     final intValue = NonNegativeInteger.fromValue(value);
 
-    return StatusCode(intValue);
+    switch (intValue) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(StatusCode(tlvElement));
+      case Fail(:final exception):
+        return Fail(
+          DecodingException(
+            TlvType.statusCode.number,
+            exception.message,
+          ),
+        );
+    }
   }
-
-  final NonNegativeInteger code;
 
   @override
   TlvType get tlvType => TlvType.statusCode;
 
   @override
-  List<int> get value => code.encode();
-
-  @override
-  String toString() => "StatusCode (type: $type): $code";
+  String toString() => "StatusCode (type: $type): $value";
 }
 
 final class StatusText extends KnownTlvElement {
   const StatusText(this.text);
 
-  factory StatusText.fromValue(List<int> value) {
-    final text = utf8.decode(value);
-
-    return StatusText(text);
+  static Result<StatusText, DecodingException> fromValue(List<int> value) {
+    try {
+      final text = utf8.decode(value);
+      return Success(StatusText(text));
+    } on FormatException catch (exception) {
+      return Fail(
+        DecodingException(
+          TlvType.statusText.number,
+          exception.message,
+        ),
+      );
+    }
   }
 
   final String text;
@@ -46,7 +61,7 @@ final class StatusText extends KnownTlvElement {
   TlvType get tlvType => TlvType.statusText;
 
   @override
-  List<int> get value => utf8.encode(text);
+  List<int> get encodedValue => utf8.encode(text);
 
   @override
   String toString() => "StatusText (type: $type): $text";

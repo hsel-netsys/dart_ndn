@@ -13,23 +13,43 @@ part of "../name_component.dart";
 ///
 /// This digest provides uniqueness of the Interest name for a given set of
 /// parameters and securely ensures that the retrieved Data packet is a response
-///  generated against the correct set of parameters.
+/// generated against the correct set of parameters.
 ///
 /// See the [NDN Packet Specification] for more information.
 ///
 /// [NDN Packet Specification]: https://docs.named-data.net/NDN-packet-spec/current/name.html#parameters-digest-component
 final class ParametersSha256DigestComponent extends NameComponent {
-  const ParametersSha256DigestComponent(this.value);
+  const ParametersSha256DigestComponent(this.encodedValue);
+
+  static const int _digestLength = 32;
+
+  static Result<ParametersSha256DigestComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
+    final length = value.length;
+
+    if (length != _digestLength) {
+      return Fail(
+        DecodingException(
+          TlvType.parametersSha256DigestComponent.number,
+          "Encountered an invalid digest length of $length}",
+        ),
+      );
+    }
+
+    return Success(ParametersSha256DigestComponent(value));
+  }
 
   @override
-  TlvType get tlvType => TlvType.implicitSha256DigestComponent;
+  TlvType get tlvType => TlvType.parametersSha256DigestComponent;
 
   @override
-  final List<int> value;
+  final List<int> encodedValue;
 
   /// Indicates whether the SHA-256 value has a [length] of 32 bytes.
-  bool get isValid => length == 32;
+  @override
+  bool get isValid => length == _digestLength;
 
   @override
-  TlvValueFormat get tlvValueFormat => TlvValueFormat.octet32;
+  String toPathSegment() => "sha256digest=${hex.encode(encodedValue)}";
 }

@@ -7,26 +7,34 @@
 import "package:meta/meta.dart";
 
 import "../../extensions/bytes_encoding.dart";
+import "../../result/result.dart";
 import "../tlv_element.dart";
 
 @immutable
 abstract base class NdnPacket extends KnownTlvElement {
   const NdnPacket();
 
-  static NdnPacket? tryParse(List<int> encodedPacket) {
+  static Result<NdnPacket, Exception> tryParse(
+    List<int> encodedPacket,
+  ) {
     final tlvElements = encodedPacket.toTvlElements();
 
-    if (tlvElements.isEmpty) {
-      return null;
+    switch (tlvElements.firstOrNull) {
+      case Success(:final tlvElement):
+        if (tlvElement is NdnPacket) {
+          return Success(tlvElement);
+        } else {
+          return Fail(
+            DecodingException(
+              tlvElement.type,
+              "Encountered an unexcepted TlvElement ${tlvElement.runtimeType}",
+            ),
+          );
+        }
+      case Fail(:final exception):
+        return Fail(exception);
+      case null:
+        return const Fail(FormatException("Encountered no TlvElement."));
     }
-
-    final tlvElement = tlvElements.first;
-
-    // FIXME: This needs be handled differently
-    if (tlvElement is NdnPacket) {
-      return tlvElement;
-    }
-
-    return null;
   }
 }

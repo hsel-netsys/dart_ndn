@@ -5,54 +5,81 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 import "../../extensions/bytes_encoding.dart";
+import "../../result/result.dart";
 import "../name/name.dart";
+import "../signature/data_signature.dart";
+import "../signature/signature_type.dart";
+import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "data_packet/content.dart";
-import "data_packet/data_signature.dart";
+import "data_packet/meta_info.dart";
 import "ndn_packet.dart";
 
 final class DataPacket extends NdnPacket {
   const DataPacket(
     this.name, {
     this.content,
+    this.metaInfo,
   });
 
-  factory DataPacket.fromValue(List<int> value) {
+  // TODO: Make decoding more robust.
+  static Result<DataPacket, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
-    final tlvIterator = tlvElements.iterator;
+    final tlvIterator = tlvElements.iterator..moveNext();
 
-    final missingNameException = Exception("Missing name in data packet");
-
-    if (!tlvIterator.moveNext()) {
-      throw missingNameException;
+    final Name name;
+    switch (tlvIterator.current) {
+      case Success(:final tlvElement):
+        if (tlvElement is Name) {
+          name = tlvElement;
+        } else {
+          return Fail(
+            DecodingException(
+              tlvElement.type,
+              "Expected Name TlvElement, encountered ${tlvElement.runtimeType}",
+            ),
+          );
+        }
+      case Fail(:final exception):
+        return Fail(exception);
     }
 
-    final name = tlvIterator.current;
+    tlvIterator.moveNext();
 
-    if (name is! Name) {
-      throw missingNameException;
+    final MetaInfo? metaInfo;
+
+    switch (tlvIterator.current) {
+      case Success<MetaInfo, DecodingException>(:final tlvElement):
+        metaInfo = tlvElement;
+      // TODO: Handle missing content
+      default:
+        metaInfo = null;
     }
 
-    tlvIterator
-      // Skip MetaInfo for now
-      ..moveNext()
-      ..moveNext();
+    tlvIterator.moveNext();
 
-    final List<int>? contentValue;
+    final List<int>? content;
 
-    final content = tlvIterator.current;
-
-    if (content is Content) {
-      contentValue = content.value;
-    } else {
-      contentValue = null;
+    switch (tlvIterator.current) {
+      case Success(:final tlvElement):
+        content = tlvElement.encodedValue;
+      // TODO: Handle missing content
+      default:
+        content = null;
     }
 
-    return DataPacket(name, content: contentValue);
+    final result = DataPacket(
+      name,
+      metaInfo: metaInfo,
+      content: content,
+    );
+    return Success(result);
   }
 
   final Name name;
+
+  final MetaInfo? metaInfo;
 
   final List<int>? content;
 
@@ -60,7 +87,7 @@ final class DataPacket extends NdnPacket {
   TlvType get tlvType => TlvType.data;
 
   @override
-  List<int> get value {
+  List<int> get encodedValue {
     final result = name.encode().toList();
 
     final content = this.content;
@@ -68,8 +95,8 @@ final class DataPacket extends NdnPacket {
       result.addAll(Content(content).encode());
     }
 
-    final dataSignature =
-        DataSignature.create(content ?? [], SignatureType.digestSha256);
+    const signatureType = SignatureType(SignatureTypeValue.digestSha256);
+    final dataSignature = DataSignature.create(content ?? [], signatureType);
 
     result.addAll(dataSignature.encode());
 

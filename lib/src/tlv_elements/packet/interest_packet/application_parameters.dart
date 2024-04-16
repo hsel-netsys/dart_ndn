@@ -8,16 +8,15 @@ import "../../../result/result.dart";
 import "../../tlv_element.dart";
 import "../../tlv_type.dart";
 
-final class Content extends KnownTlvElement {
-  const Content(this.encodedValue);
+final class ApplicationParameters extends OctetTlvElement {
+  const ApplicationParameters(super.value);
 
-  static Result<Content, DecodingException> fromValue(List<int> value) {
-    return Success(Content(value));
+  static Result<ApplicationParameters, DecodingException> fromValue(
+    List<int> value,
+  ) {
+    return Success(ApplicationParameters(value));
   }
 
   @override
-  final List<int> encodedValue;
-
-  @override
-  TlvType get tlvType => TlvType.content;
+  TlvType get tlvType => TlvType.applicationParameters;
 }

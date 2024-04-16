@@ -6,6 +6,7 @@
 
 import "../../extensions/bytes_encoding.dart";
 import "../../extensions/non_negative_integer.dart";
+import "../../result/result.dart";
 import "../tlv_element.dart";
 import "../tlv_type.dart";
 import "lp_packet.dart";
@@ -13,18 +14,23 @@ import "lp_packet.dart";
 final class NackPacket extends LpPacket {
   const NackPacket([this.nackReason]);
 
-  factory NackPacket.fromValue(List<int> value) {
+  static Result<NackPacket, DecodingException> fromValue(List<int> value) {
     final tlvElements = value.toTvlElements();
 
     NackReason? nackReason;
 
     for (final tlvElement in tlvElements) {
-      if (tlvElement is NackReason) {
-        nackReason ??= tlvElement;
+      if (tlvElement is Success<NackReason, DecodingException>) {
+        nackReason ??= tlvElement.tlvElement;
+      }
+
+      if (tlvElement is Fail<TlvElement, DecodingException> &&
+          tlvElement.exception.isCriticalError) {
+        return Fail(DecodingException(tlvElement.exception.type));
       }
     }
 
-    return NackPacket(nackReason);
+    return Success(NackPacket(nackReason));
   }
 
   final NackReason? nackReason;
@@ -33,21 +39,19 @@ final class NackPacket extends LpPacket {
   TlvType get tlvType => TlvType.nack;
 
   @override
-  List<int> get value => [];
+  List<int> get encodedValue => [];
 }
 
 enum NackReasonValue {
-  none(0),
-  congestion(50),
-  duplicate(100),
-  noRoute(150),
+  none(NonNegativeInteger.fromInt(0)),
+  congestion(NonNegativeInteger.fromInt(50)),
+  duplicate(NonNegativeInteger.fromInt(100)),
+  noRoute(NonNegativeInteger.fromInt(150)),
   ;
 
-  const NackReasonValue(this._code);
+  const NackReasonValue(this.code);
 
-  final int _code;
-
-  NonNegativeInteger get code => NonNegativeInteger(_code);
+  final NonNegativeInteger code;
 
   static final Map<int, NackReasonValue> _registry =
       Map.fromEntries(values.map((e) => MapEntry(e.code, e)));
@@ -58,12 +62,20 @@ enum NackReasonValue {
 final class NackReason extends KnownTlvElement {
   const NackReason([this._nackReasonValue]);
 
-  factory NackReason.fromValue(List<int> value) {
-    final nonNegativeInteger = NonNegativeInteger.fromValue(value);
-
-    final nackReasonValue = NackReasonValue.tryParse(nonNegativeInteger);
-
-    return NackReason(nackReasonValue);
+  static Result<NackReason, DecodingException> fromValue(List<int> value) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        final nackReasonValue = NackReasonValue.tryParse(tlvElement.value);
+        return Success(NackReason(nackReasonValue));
+      case Fail(:final exception):
+        return Fail(
+          DecodingException(
+            TlvType.nackReason.number,
+            exception.message,
+          ),
+        );
+    }
   }
 
   final NackReasonValue? _nackReasonValue;
@@ -75,5 +87,5 @@ final class NackReason extends KnownTlvElement {
   TlvType get tlvType => TlvType.nackReason;
 
   @override
-  List<int> get value => nackReasonValue.code.encode();
+  List<int> get encodedValue => nackReasonValue.code.encode();
 }

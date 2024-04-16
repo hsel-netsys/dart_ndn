@@ -6,64 +6,163 @@
 
 part of "../name_component.dart";
 
-// TODO: Differentiate TLV-VALUE Format, see https://redmine.named-data.net/projects/ndn-tlv/wiki/NameComponentType
-// TODO: Support Alternate Uri-Format, see https://redmine.named-data.net/projects/ndn-tlv/wiki/NameComponentType
+final class KeywordNameComponent extends NameComponent {
+  const KeywordNameComponent(this.encodedValue);
 
-/// This class serves as the basis for [NameComponent]s of other component types
-/// governed by the [Name Component Assignment policy].
-///
-/// [Name Component Assignment policy]: https://redmine.named-data.net/projects/ndn-tlv/wiki/NameComponentType
-sealed class OtherTypeComponent extends NameComponent {
-  const OtherTypeComponent(this.value);
-
-  @override
-  final List<int> value;
+  static Result<KeywordNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
+    // TODO: Are there any requirements for this type?
+    return Success(KeywordNameComponent(value));
+  }
 
   @override
-  TlvValueFormat get tlvValueFormat => TlvValueFormat.nonNegativeInteger;
-}
-
-final class KeywordNameComponent extends OtherTypeComponent {
-  const KeywordNameComponent(super.value);
+  final List<int> encodedValue;
 
   @override
   TlvType get tlvType => TlvType.keywordNameComponent;
-
-  @override
-  TlvValueFormat get tlvValueFormat => TlvValueFormat.octetStar;
 }
 
-final class SegmentNameComponent extends OtherTypeComponent {
-  const SegmentNameComponent(super.value);
+sealed class NonNegativeIntegerNameComponent extends NameComponent {
+  const NonNegativeIntegerNameComponent(this.value);
+
+  final NonNegativeInteger value;
+
+  @override
+  List<int> get encodedValue => value.encode();
+}
+
+final class SegmentNameComponent extends NonNegativeIntegerNameComponent {
+  const SegmentNameComponent(super.encodedValue);
+
+  static Result<SegmentNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(SegmentNameComponent(tlvElement));
+      case Fail(:final exception):
+        return Fail(
+          DecodingException(
+            TlvType.segmentNameComponent.number,
+            exception.message,
+          ),
+        );
+    }
+  }
 
   @override
   TlvType get tlvType => TlvType.segmentNameComponent;
+
+  @override
+  String toPathSegment() => "seg=$percentEncodedValue";
 }
 
-final class ByteOffsetNameComponent extends OtherTypeComponent {
-  const ByteOffsetNameComponent(super.value);
+final class ByteOffsetNameComponent extends NonNegativeIntegerNameComponent {
+  const ByteOffsetNameComponent(super.encodedValue);
+
+  static Result<ByteOffsetNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(ByteOffsetNameComponent(tlvElement));
+      case Fail(:final exception):
+        return Fail(
+          DecodingException(
+            TlvType.byteOffsetNameComponent.number,
+            exception.message,
+          ),
+        );
+    }
+  }
 
   @override
   TlvType get tlvType => TlvType.byteOffsetNameComponent;
+
+  @override
+  String toPathSegment() => "off=$percentEncodedValue";
 }
 
-final class VersionNameComponent extends OtherTypeComponent {
-  const VersionNameComponent(super.value);
+final class VersionNameComponent extends NonNegativeIntegerNameComponent {
+  const VersionNameComponent(super.encodedValue);
+
+  static Result<VersionNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(VersionNameComponent(tlvElement));
+      case Fail(:final exception):
+        return Fail(
+          DecodingException(
+            TlvType.versionNameComponent.number,
+            exception.message,
+          ),
+        );
+    }
+  }
 
   @override
   TlvType get tlvType => TlvType.versionNameComponent;
+
+  @override
+  String toPathSegment() => "v=$percentEncodedValue";
 }
 
-final class TimestampNameComponent extends OtherTypeComponent {
-  const TimestampNameComponent(super.value);
+final class TimestampNameComponent extends NonNegativeIntegerNameComponent {
+  const TimestampNameComponent(super.encodedValue);
+
+  static Result<TimestampNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(TimestampNameComponent(tlvElement));
+      case Fail(:final exception):
+        return Fail(
+          DecodingException(
+            TlvType.timestampNameComponent.number,
+            exception.message,
+          ),
+        );
+    }
+  }
 
   @override
   TlvType get tlvType => TlvType.timestampNameComponent;
+
+  @override
+  String toPathSegment() => "t=$percentEncodedValue";
 }
 
-final class SequenceNumNameComponent extends OtherTypeComponent {
-  const SequenceNumNameComponent(super.value);
+final class SequenceNumNameComponent extends NonNegativeIntegerNameComponent {
+  const SequenceNumNameComponent(super.encodedValue);
+
+  static Result<SequenceNumNameComponent, DecodingException> fromValue(
+    List<int> value,
+  ) {
+    switch (NonNegativeInteger.fromValue(value)) {
+      // ignore: pattern_never_matches_value_type
+      case Success(:final tlvElement):
+        return Success(SequenceNumNameComponent(tlvElement));
+      case Fail(:final exception):
+        return Fail(
+          DecodingException(
+            TlvType.sequenceNumNameComponent.number,
+            exception.message,
+          ),
+        );
+    }
+  }
 
   @override
   TlvType get tlvType => TlvType.sequenceNumNameComponent;
+
+  @override
+  String toPathSegment() => "t=$percentEncodedValue";
 }
